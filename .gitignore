@@ -66,7 +66,7 @@ bower_components
 .sass-cache
 test/bower_components
 app/assets/scripts/collecticons/catalog.json
-app/assets/styles/core/_collecticons.scss
+app/assets/styles/collecticons.css
 
 ################################################
 # Node.js / NPM

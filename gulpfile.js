@@ -81,7 +81,6 @@ function serve () {
 module.exports.clean = clean;
 module.exports.serve = gulp.series(
   collecticons,
-  () => del(['app/assets/styles']),
   gulp.parallel(
     vendorScripts,
     javascript
@@ -91,11 +90,11 @@ module.exports.serve = gulp.series(
 module.exports.default = gulp.series(
   clean,
   collecticons,
-  () => del(['app/assets/styles']),
   gulp.parallel(
     vendorScripts,
     javascript
   ),
+  () => gulp.src('app/assets/styles/collecticons.css').pipe(gulp.dest('dist/assets/styles/')),
   gulp.parallel(
     html,
     imagesImagemin
@@ -176,8 +175,8 @@ function collecticons () {
     '--font-dest', 'app/assets/fonts',
     '--font-name', 'Collecticons',
     '--font-types', 'woff',
-    '--style-format', 'sass',
-    '--style-dest', 'app/assets/styles/core/',
+    '--style-format', 'css',
+    '--style-dest', 'app/assets/styles/',
     '--style-name', 'collecticons',
     '--class-name', 'collecticon',
     '--author-name', 'Development Seed',
