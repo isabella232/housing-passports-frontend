@@ -11,6 +11,11 @@
       "jsx": true
     }
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
     "semi": [2, "always"],
     "jsx-quotes": [2, "prefer-single"],
