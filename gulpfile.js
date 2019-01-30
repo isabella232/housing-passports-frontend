@@ -10,7 +10,6 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const log = require('fancy-log');
-const SassString = require('node-sass').types.String;
 const notifier = require('node-notifier');
 const historyApiFallback = require('connect-history-api-fallback');
 const through2 = require('through2');
@@ -75,7 +74,6 @@ function serve () {
   ], bs.reload);
 
   gulp.watch('app/assets/icons/collecticons/**', collecticons);
-  gulp.watch('app/assets/styles/**/*.scss', styles);
   gulp.watch('app/assets/scripts/**/**', javascript);
   gulp.watch('package.json', vendorScripts);
 }
@@ -83,21 +81,21 @@ function serve () {
 module.exports.clean = clean;
 module.exports.serve = gulp.series(
   collecticons,
+  () => del(['app/assets/styles']),
   gulp.parallel(
     vendorScripts,
-    javascript,
-    styles
+    javascript
   ),
   serve
 );
 module.exports.default = gulp.series(
   clean,
   collecticons,
+  () => del(['app/assets/styles']),
   gulp.parallel(
     vendorScripts,
     javascript
   ),
-  styles,
   gulp.parallel(
     html,
     imagesImagemin
@@ -200,39 +198,6 @@ function finish () {
     .pipe($.size({ title: 'build', gzip: true }));
 }
 
-function styles () {
-  return gulp.src('app/assets/styles/main.scss')
-    .pipe($.plumber(function (e) {
-      notifier.notify({
-        title: 'Oops! Sass errored:',
-        message: e.message
-      });
-      console.log('Sass error:', e.toString()); // eslint-disable-line
-      if (isProd()) {
-        throw new Error(e);
-      }
-      // Allows the watch to continue.
-      this.emit('end');
-    }))
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({
-      outputStyle: 'expanded',
-      precision: 10,
-      functions: {
-        'urlencode($url)': function (url) {
-          var v = new SassString();
-          v.setValue(encodeURIComponent(url.getValue()));
-          return v;
-        }
-      },
-      includePaths: require('bourbon').includePaths.concat('node_modules/jeet')
-    }))
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest('.tmp/assets/styles'))
-    // https://browsersync.io/docs/gulp#gulp-sass-maps
-    .pipe(bs.stream({ match: '**/*.css' }));
-}
-
 // After being rendered by jekyll process the html files. (merge css files, etc)
 function html () {
   return gulp.src('app/*.html')
@@ -242,7 +207,6 @@ function html () {
     // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-286277540
     // https://github.com/mishoo/UglifyJS2/issues/1609 -> Just until gulp-uglify updates
     .pipe($.if('*.js', $.uglify({ compress: { comparisons: false, collapse_vars: false } })))
-    .pipe($.if('*.css', $.csso()))
     .pipe($.if(/\.(css|js)$/, $.rev()))
     .pipe($.revRewrite())
     .pipe(gulp.dest('dist'));
