@@ -182,7 +182,7 @@ function collecticons () {
     '--author-name', 'Development Seed',
     '--author-url', 'https://developmentseed.org/',
     '--no-preview',
-    '--catalog-dest', 'app/assets/scripts/collecticons/'
+    '--catalog-dest', 'app/assets/scripts/atomic-components/collecticons/'
   ];
 
   return cp.spawn('node', args, { stdio: 'inherit' });
