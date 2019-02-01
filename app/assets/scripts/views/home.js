@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
-import collecticon from '../collecticons';
+import collecticon from '../atomic-components/collecticons';
 
 const Title = styled.h1`
   font-size: 1.5em;

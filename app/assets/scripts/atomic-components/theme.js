@@ -17,8 +17,8 @@ colors = {
 };
 
 let typography = {
-  rootFontSize: 16,
-  baseFontColor: tint('16%', colors.baseColor),
+  rootFontSize: '16px',
+  baseFontColor: tint(0.16, colors.baseColor),
   baseFontFamily: 'Verdana',
   baseFontStyle: 'normal',
   baseFontLight: 300,
@@ -30,20 +30,26 @@ let typography = {
   baseLineHeight: 1.5
 };
 
-// typography = {
-//   ...typography;
-//   //...
-// };
+typography = {
+  ...typography,
+  headingFontFamily: typography.baseFontFamily,
+  headingFontLight: 300,
+  headingFontRegular: 400,
+  headingFontMedium: 500,
+  headingFontBold: 500,
+  headingFontWeight: 500
+};
 
 let shape = {
-  rounded: 0.25,
-  ellipsoid: 320
+  rounded: '0.25rem',
+  ellipsoid: '320rem',
+  borderWidth: '1px'
 };
 
 let layout = {
   globalSpacing: '1rem',
-  rowMinWidth: 960,
-  rowMaxWidth: 1280
+  rowMinWidth: '960px',
+  rowMaxWidth: '1280px'
 };
 
 export default {
