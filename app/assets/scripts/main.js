@@ -13,6 +13,7 @@ import history from './utils/history';
 
 import Home from './views/home';
 import UhOh from './views/uhoh';
+import Playground from './views/playground';
 
 const CSSNormalize = createGlobalStyle` ${normalize()} `;
 
@@ -25,6 +26,7 @@ const Root = () => (
         <ThemeProvider theme={theme.main}>
           <Switch>
             <Route exact path='/' component={Home} />
+            <Route exact path='/playground' component={Playground} />
             <Route path='*' component={UhOh} />
           </Switch>
         </ThemeProvider>
