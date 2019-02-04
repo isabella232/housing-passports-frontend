@@ -1,8 +1,8 @@
 import { rgba, tint } from 'polished';
 
 let colors = {
-  baseColor: '#14213d',
-  primaryColor: '#5860ff',
+  baseColor: '#000000',
+  primaryColor: '#D9166F',
   secondaryColor: '#ffc700',
   dangerColor: '#d85d3f',
   successColor: '#216869',
@@ -19,12 +19,12 @@ colors = {
 let typography = {
   rootFontSize: '16px',
   baseFontColor: tint(0.16, colors.baseColor),
-  baseFontFamily: 'Verdana',
+  baseFontFamily: "'Open Sans', sans-serif",
   baseFontStyle: 'normal',
   baseFontLight: 300,
   baseFontRegular: 400,
   baseFontMedium: 500,
-  baseFontBold: 500,
+  baseFontBold: 700,
   baseFontWeight: 300,
   baseFontSize: '1rem',
   baseLineHeight: 1.5
@@ -32,12 +32,12 @@ let typography = {
 
 typography = {
   ...typography,
-  headingFontFamily: typography.baseFontFamily,
+  headingFontFamily: "'Josefin Sans', sans-serif",
   headingFontLight: 300,
   headingFontRegular: 400,
   headingFontMedium: 500,
-  headingFontBold: 500,
-  headingFontWeight: 500
+  headingFontBold: 700,
+  headingFontWeight: 700
 };
 
 let shape = {

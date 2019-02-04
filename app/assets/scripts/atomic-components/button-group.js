@@ -45,27 +45,27 @@ const ButtonGroup = styled.div`
   ${({ orientation }) => orientation === 'vertical' && css`
     flex-flow: column;
 
-    > .button:first-child:not(:last-child) {
+    > ${Button}:first-child:not(:last-child) {
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
       clip-path: inset(-100% -100% 0 -100%);
     }
 
-    > .button:last-child:not(:first-child) {
+    > ${Button}:last-child:not(:first-child) {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       clip-path: inset(0 -100% -100% -100%);
     }
 
-    > .button:not(:first-child):not(:last-child) {
+    > ${Button}:not(:first-child):not(:last-child) {
       border-radius: 0;
       clip-path: inset(0 -100%);
     }
 
-      > ${Button} + ${Button} {
-        margin-left: -${themeVal('shape.borderWidth')};
-      }
-    `}
+    > ${Button} + ${Button} {
+      margin-top: -${themeVal('shape.borderWidth')};
+    }
+  `}
 `;
 
 if (environment !== 'production') {

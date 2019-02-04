@@ -54,7 +54,7 @@ const ButtonIconBrand = styled(Button)`
   }
 `;
 
-// Below the differente button variations ans sizes to render all buttons.
+// Below the differente button variations and sizes to render all buttons.
 
 const variations = [
   'base-raised-light',
