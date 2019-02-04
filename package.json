@@ -57,7 +57,7 @@
     "babelify": "^10.0.0",
     "browser-sync": "^2.24.4",
     "browserify": "^16.2.2",
-    "collecticons-processor": "^3.1.0",
+    "collecticons-processor": "https://github.com/developmentseed/collecticons-processor#776744b291d485fe18fc72e577477510039869b9",
     "del": "^3.0.0",
     "envify": "^4.1.0",
     "eslint": "^5.4.0",

@@ -8,6 +8,7 @@ import { normalize } from 'polished';
 
 import theme from './atomic-components/theme';
 import { themeVal } from './atomic-components/utils/functions';
+import { collecticonsFont } from './atomic-components/collecticons'
 
 import store from './utils/store';
 import history from './utils/history';
@@ -17,6 +18,7 @@ import UhOh from './views/uhoh';
 import Playground from './views/playground';
 
 const CSSNormalize = createGlobalStyle` ${normalize()} `;
+const CSSCollecticons = createGlobalStyle` ${collecticonsFont()} `;
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -38,6 +40,7 @@ const Root = () => (
       <ThemeProvider theme={theme.main}>
         <React.Fragment>
           <CSSNormalize />
+          <CSSCollecticons />
           <GlobalStyle />
           <Switch>
             <Route exact path='/' component={Home} />
