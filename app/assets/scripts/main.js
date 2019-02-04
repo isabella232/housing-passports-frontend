@@ -23,6 +23,9 @@ const CSSCollecticons = createGlobalStyle` ${collecticonsFont()} `;
 const GlobalStyle = createGlobalStyle`
   html {
     box-sizing: border-box;
+    font-size: ${themeVal('typography.rootFontSize')};
+    /* Changes the default tap highlight to be completely transparent in iOS. */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
   *,
@@ -34,7 +37,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: #fff;
     color: ${themeVal('typography.baseFontColor')};
-    font-size: ${themeVal('typography.rootFontSize')};
+    font-size: ${themeVal('typography.baseFontSize')};
     line-height: ${themeVal('typography.baseLineHeight')};
     font-family: ${themeVal('typography.baseFontFamily')};
     font-weight: ${themeVal('typography.baseFontWeight')};
