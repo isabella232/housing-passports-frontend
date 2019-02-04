@@ -21,6 +21,16 @@ const CSSNormalize = createGlobalStyle` ${normalize()} `;
 const CSSCollecticons = createGlobalStyle` ${collecticonsFont()} `;
 
 const GlobalStyle = createGlobalStyle`
+  html {
+    box-sizing: border-box;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
   body {
     background: #fff;
     color: ${themeVal('typography.baseFontColor')};
