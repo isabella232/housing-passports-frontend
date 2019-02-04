@@ -50,7 +50,7 @@ const DarkUl = styled(Ul)`
 // Extend a button to add an icon.
 const ButtonIconBrand = styled(Button)`
   ::before {
-    ${collecticon('brand-devseed')}
+    ${collecticon('marker')}
   }
 `;
 
