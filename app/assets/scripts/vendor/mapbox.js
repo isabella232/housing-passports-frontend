@@ -4,7 +4,7 @@ import { css } from 'styled-components';
 // by styled components.
 
 // stylelint-disable
-export default css`
+export default () => css`
   .mapboxgl-map {
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     overflow: hidden;

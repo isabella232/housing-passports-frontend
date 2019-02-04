@@ -3,10 +3,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeVal } from '../atomic-components/utils/functions';
-import collecticon from '../atomic-components/collecticons';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
+import MapillaryView from '../components/mapillary';
+import MapboxView from '../components/mapbox';
 
 const Page = styled.section`
   display: grid;
@@ -64,10 +65,12 @@ const Vizualizations = styled.div`
 `;
 
 const StreetViz = styled.section`
+  position: relative;
   grid-row: auto / span 1;
 `;
 
 const OverheadViz = styled.section`
+  position: relative;
   grid-row: 2 / span 1;
 `;
 
@@ -86,10 +89,10 @@ export default class Home extends React.Component {
         <PageBody>
           <Vizualizations>
             <StreetViz>
-              <p>This is the street viz.</p>
+              <MapillaryView />
             </StreetViz>
             <OverheadViz>
-              <p>This is the overhead viz.</p>
+              <MapboxView />
             </OverheadViz>
           </Vizualizations>
         </PageBody>
