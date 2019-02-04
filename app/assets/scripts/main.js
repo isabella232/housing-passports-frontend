@@ -8,7 +8,7 @@ import { normalize } from 'polished';
 
 import theme from './atomic-components/theme';
 import { themeVal } from './atomic-components/utils/functions';
-import { collecticonsFont } from './atomic-components/collecticons'
+import { collecticonsFont } from './atomic-components/collecticons';
 
 import store from './utils/store';
 import history from './utils/history';

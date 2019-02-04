@@ -49,10 +49,10 @@ export const px = unitify('px');
 export const themeVal = path => ({ theme }) => {
   const v = get(theme, path, undefined);
   if (v === undefined) {
-    console.error(
+    console.error( // eslint-disable-line
       `Theme Value Error: path [${path}] not found in theme.`,
       theme
-    ); // eslint-disable-line
+    );
   }
   return v;
 };

@@ -31,7 +31,7 @@ const PageTitle = styled.h1`
   font-weight: ${themeVal('typography.headingFontWeight')};
   letter-spacing: 0.125em;
   font-size: 1.125rem;
-  line-height 1.25rem;
+  line-height: 1.25rem;
   text-transform: uppercase;
   color: ${themeVal('colors.primaryColor')};
   margin: 0;
