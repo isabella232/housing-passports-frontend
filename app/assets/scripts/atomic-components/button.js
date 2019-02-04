@@ -55,13 +55,16 @@ const Button = styled(BaseButton)`
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
+  line-height: 1.5rem;
+  font-size: 1rem;
+  padding: 0.25rem 0.75rem;
+  min-width: 2rem;
   background: none;
   text-shadow: none;
   border: 0;
   border-radius: ${themeVal('shape.rounded')};
-  text-transform: uppercase;
-  font-family: ${themeVal('typography.headingFontFamily')};
-  font-weight: ${themeVal('typography.headingFontWeight')};
+  font-family: ${themeVal('typography.baseFontFamily')};
+  font-weight: ${themeVal('typography.baseFontBold')};
   cursor: pointer;
 
   /* States */
@@ -118,11 +121,14 @@ const Button = styled(BaseButton)`
 
   /* Hide Text */
   ${({ hideText }) => hideText && css`
-  &::before,
-  &::after {
-    margin: 0;
-  }
-  
+    padding-left: 0;
+    padding-right: 0;
+
+    &::before,
+    &::after {
+      margin: 0;
+    }
+
     > * {
       ${visuallyHidden()}
     }
@@ -216,8 +222,7 @@ function buttonVariation (color, style, brightness, { theme }) {
 
     ${shadowColor &&
       css`
-        box-shadow: 0 -1px 1px 0 ${rgba(theme.colors.baseColor, 0.08)},
-          0 2px 6px 0 ${shadowColor};
+        box-shadow: 0 -1px 1px 0 ${rgba(theme.colors.baseColor, 0.08)}, 0 2px 6px 0 ${shadowColor};
       `}
 
     /* &.button--hover, */
@@ -338,21 +343,21 @@ function renderButtonSize (props) {
     case 'small':
       return css`
         line-height: 1.25rem;
-        font-size: 0.75rem;
+        font-size: 0.875rem;
         padding: 0.125rem 0.5rem;
         min-width: 1.5rem;
       `;
     case 'large':
       return css`
         line-height: 1.5rem;
-        font-size: 0.875rem;
+        font-size: 1rem;
         padding: 0.5rem 1.5rem;
         min-width: 2.5rem;
       `;
     case 'xlarge':
       return css`
         line-height: 2rem;
-        font-size: 0.875rem;
+        font-size: 1rem;
         padding: 0.5rem 2rem;
         min-width: 3rem;
       `;
@@ -360,7 +365,7 @@ function renderButtonSize (props) {
     default:
       return css`
         line-height: 1.5rem;
-        font-size: 0.75rem;
+        font-size: 1rem;
         padding: 0.25rem 1rem;
         min-width: 2rem;
       `;

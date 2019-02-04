@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeVal } from '../atomic-components/utils/functions';
+import collecticon from '../atomic-components/collecticons';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
@@ -49,10 +50,28 @@ const PageTitle = styled.h1`
   }
 `;
 
+const ButtonSplitViz = styled(Button)`
+  ::before {
+    ${collecticon('layout-row-2x')}
+  }
+`;
+
+const ButtonStreetViz = styled(Button)`
+  ::before {
+    ${collecticon('road')}
+  }
+`;
+
+const ButtonOverheadViz = styled(Button)`
+  ::before {
+    ${collecticon('map')}
+  }
+`;
+
 const PageBody = styled.main`
 `;
 
-const Vizualizations = styled.div`
+const Visualizations = styled.div`
   display: grid;
   height: 100%;
 
@@ -81,20 +100,20 @@ export default class Home extends React.Component {
         <PageHeader>
           <PageTitle>Housing Passports <small>Colombia</small></PageTitle>
           <ButtonGroup orientation='horizontal'>
-            <Button variation='base-raised-light' active>Split</Button>
-            <Button variation='base-raised-light'>Street</Button>
-            <Button variation='base-raised-light'>Overhead</Button>
+            <ButtonSplitViz variation='base-raised-light' hideText active>Split</ButtonSplitViz>
+            <ButtonStreetViz variation='base-raised-light' hideText>Street</ButtonStreetViz>
+            <ButtonOverheadViz variation='base-raised-light' hideText>Overhead</ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
         <PageBody>
-          <Vizualizations>
+          <Visualizations>
             <StreetViz>
               <MapillaryView />
             </StreetViz>
             <OverheadViz>
               <MapboxView />
             </OverheadViz>
-          </Vizualizations>
+          </Visualizations>
         </PageBody>
       </Page>
     );
