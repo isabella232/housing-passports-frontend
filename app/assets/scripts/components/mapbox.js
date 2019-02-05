@@ -1,12 +1,14 @@
 'use strict';
 import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle, withTheme, ThemeProvider } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 
 import { mbtoken, environment } from '../config';
 import { visuallyHidden } from '../atomic-components/utils';
 import mapboxStyle from '../vendor/mapbox';
 import AbsoluteContainer from '../atomic-components/absolute-container';
+import MapboxControl from './mapbox-react-control';
+import LayerControlDropdown from './map-layer-control';
 
 // set once
 mapboxgl.accessToken = mbtoken;
@@ -23,7 +25,7 @@ const MapboxFigure = styled.figure`
   }
 `;
 
-export default class MapboxView extends React.Component {
+class MapboxView extends React.Component {
   // constructor (props) {
   //   super(props);
 
@@ -60,6 +62,18 @@ export default class MapboxView extends React.Component {
 
     // Add zoom controls.
     this.map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+
+    this.layerDropdownControl = new MapboxControl(props => (
+      <ThemeProvider theme={props.theme}>
+        <LayerControlDropdown
+        />
+      </ThemeProvider>
+    ));
+
+    this.map.addControl(this.layerDropdownControl, 'bottom-left');
+
+    // Initial rendering.
+    this.layerDropdownControl.render(this.props, this.state);
 
     // Remove compass.
     document.querySelector('.mapboxgl-ctrl .mapboxgl-ctrl-compass').remove();
@@ -99,6 +113,8 @@ export default class MapboxView extends React.Component {
     );
   }
 }
+
+export default withTheme(MapboxView);
 
 if (environment !== 'production') {
   MapboxView.propTypes = {
