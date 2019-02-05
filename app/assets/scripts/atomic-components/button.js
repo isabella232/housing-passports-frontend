@@ -7,7 +7,14 @@ import { environment } from '../config';
 import { antialiased, visuallyHidden } from './utils';
 import { themeVal } from './utils/functions';
 
-const BaseButton = ({ children, active, ...rest }) => (
+const BaseButton = ({
+  children,
+  active,
+  hideText,
+  size,
+  variation,
+  ...rest
+}) => (
   <button {...rest}>
     <span>{children}</span>
   </button>
@@ -16,7 +23,10 @@ const BaseButton = ({ children, active, ...rest }) => (
 if (environment !== 'production') {
   BaseButton.propTypes = {
     children: T.node,
-    active: T.bool
+    active: T.bool,
+    hideText: T.bool,
+    size: T.string,
+    variation: T.string
   };
 }
 
