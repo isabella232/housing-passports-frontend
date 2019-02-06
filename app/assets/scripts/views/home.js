@@ -22,11 +22,13 @@ const Page = styled.section`
 `;
 
 const PageHeader = styled.header`
+  position: relative;
+  z-index: 10;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 0 16px 4px ${themeVal('colors.baseAlphaColor')};
+  box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
 
   > *:last-child {
     margin-left: auto;
