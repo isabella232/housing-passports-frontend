@@ -93,7 +93,7 @@ const StreetViz = styled.section`
 
 const OverheadViz = styled.section`
   position: relative;
-  grid-row: 2 / span 1;
+  grid-row: auto / span 1;
 `;
 
 class Home extends React.Component {
@@ -103,7 +103,9 @@ class Home extends React.Component {
       mapillaryPos: [-74.1613, 4.5481],
       mapillaryBearing: 0,
 
-      hoverFeatureId: null
+      hoverFeatureId: null,
+
+      vizView: 'split'
     };
 
     this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
@@ -133,36 +135,73 @@ class Home extends React.Component {
     this.setState({ hoverFeatureId: id });
   }
 
+  onVizViewClick (type) {
+    this.setState({ vizView: type });
+  }
+
   render () {
     return (
       <Page>
         <PageHeader>
-          <PageTitle>Housing Passports <small>Colombia</small></PageTitle>
+          <PageTitle>
+            Housing Passports <small>Colombia</small>
+          </PageTitle>
           <ButtonGroup orientation='horizontal'>
-            <ButtonSplitViz variation='base-raised-light' hideText active>Split</ButtonSplitViz>
-            <ButtonStreetViz variation='base-raised-light' hideText>Street</ButtonStreetViz>
-            <ButtonOverheadViz variation='base-raised-light' hideText>Overhead</ButtonOverheadViz>
+            <ButtonSplitViz
+              variation='base-raised-light'
+              hideText
+              title='Change to split view'
+              active={this.state.vizView === 'split'}
+              onClick={this.onVizViewClick.bind(this, 'split')}
+            >
+              Split
+            </ButtonSplitViz>
+            <ButtonStreetViz
+              variation='base-raised-light'
+              hideText
+              title='Change to street view'
+              active={this.state.vizView === 'street'}
+              onClick={this.onVizViewClick.bind(this, 'street')}
+            >
+              Street
+            </ButtonStreetViz>
+            <ButtonOverheadViz
+              variation='base-raised-light'
+              hideText
+              title='Change to overhead view'
+              active={this.state.vizView === 'overhead'}
+              onClick={this.onVizViewClick.bind(this, 'overhead')}
+            >
+              Overhead
+            </ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
         <main>
           <Visualizations>
-            <StreetViz>
-              <MapillaryView
-                rooftopCentroids={this.props.rooftopCentroids.getData(null)}
-                onCoordinatesChange={this.onMapillaryCoordsChange}
-                onBearingChange={this.onMapillaryBearingChange}
-                onMarkerHover={this.onMapillaryMarkerHover}
-                highlightMarkerId={this.state.hoverFeatureId}
-              />
-            </StreetViz>
-            <OverheadViz>
-              <MapboxView
-                markerPos={this.state.mapillaryPos}
-                markerBearing={this.state.mapillaryBearing}
-                onFeatureHover={this.onMapboxFeatureHover}
-                highlightFeatureId={this.state.hoverFeatureId}
-              />
-            </OverheadViz>
+            {this.state.vizView !== 'overhead' && (
+              <StreetViz>
+                <MapillaryView
+                  vizView={this.state.vizView}
+                  rooftopCentroids={this.props.rooftopCentroids.getData(null)}
+                  onCoordinatesChange={this.onMapillaryCoordsChange}
+                  onBearingChange={this.onMapillaryBearingChange}
+                  onMarkerHover={this.onMapillaryMarkerHover}
+                  highlightMarkerId={this.state.hoverFeatureId}
+                />
+              </StreetViz>
+            )}
+
+            {this.state.vizView !== 'street' && (
+              <OverheadViz>
+                <MapboxView
+                  vizView={this.state.vizView}
+                  markerPos={this.state.mapillaryPos}
+                  markerBearing={this.state.mapillaryBearing}
+                  onFeatureHover={this.onMapboxFeatureHover}
+                  highlightFeatureId={this.state.hoverFeatureId}
+                />
+              </OverheadViz>
+            )}
           </Visualizations>
         </main>
       </Page>
@@ -189,4 +228,7 @@ function dispatcher (dispatch) {
   };
 }
 
-export default connect(mapStateToProps, dispatcher)(Home);
+export default connect(
+  mapStateToProps,
+  dispatcher
+)(Home);

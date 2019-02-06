@@ -75,6 +75,10 @@ class MapillaryView extends React.PureComponent {
   componentDidUpdate (prevProps) {
     this.setupMarkers(this.props);
 
+    if (this.props.vizView !== prevProps.vizView) {
+      this.mly.resize();
+    }
+
     // Highlight the marker.
     // De-highlight the previous one.
     const hl = this.props.highlightMarkerId;
@@ -149,6 +153,7 @@ export default withTheme(MapillaryView);
 if (environment !== 'production') {
   MapillaryView.propTypes = {
     theme: T.object,
+    vizView: T.string,
     onCoordinatesChange: T.func,
     onBearingChange: T.func,
     onMarkerHover: T.func,

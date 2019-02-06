@@ -62,6 +62,10 @@ class MapboxView extends React.PureComponent {
   }
 
   componentDidUpdate (prevProps) {
+    if (this.props.vizView !== prevProps.vizView) {
+      this.map.resize();
+    }
+
     if (this.mapillaryPositionMarker) {
       this.mapillaryPositionMarker.setLngLat(this.props.markerPos);
     }
@@ -190,6 +194,7 @@ export default withTheme(MapboxView);
 if (environment !== 'production') {
   MapboxView.propTypes = {
     theme: T.object,
+    vizView: T.string,
     onFeatureHover: T.func,
     markerPos: T.array,
     markerBearing: T.number,
