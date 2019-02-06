@@ -3,48 +3,18 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { normalize } from 'polished';
+import { ThemeProvider } from 'styled-components';
 
 import theme from './atomic-components/theme';
-import { themeVal } from './atomic-components/utils/functions';
-import { collecticonsFont } from './atomic-components/collecticons';
 
 import store from './utils/store';
 import history from './utils/history';
 
+import GlobalStyles from './global-styles';
+
 import Home from './views/home';
 import UhOh from './views/uhoh';
 import Playground from './views/playground';
-
-const CSSNormalize = createGlobalStyle` ${normalize()} `;
-const CSSCollecticons = createGlobalStyle` ${collecticonsFont()} `;
-
-const GlobalStyle = createGlobalStyle`
-  html {
-    box-sizing: border-box;
-    font-size: ${themeVal('typography.rootFontSize')};
-    /* Changes the default tap highlight to be completely transparent in iOS. */
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: inherit;
-  }
-
-  body {
-    background: #fff;
-    color: ${themeVal('typography.baseFontColor')};
-    font-size: ${themeVal('typography.baseFontSize')};
-    line-height: ${themeVal('typography.baseLineHeight')};
-    font-family: ${themeVal('typography.baseFontFamily')};
-    font-weight: ${themeVal('typography.baseFontWeight')};
-    font-style: ${themeVal('typography.baseFontStyle')};
-    min-width: ${themeVal('layout.rowMinWidth')};
-  }
-`;
 
 // Root component. Used by the router.
 const Root = () => (
@@ -52,9 +22,7 @@ const Root = () => (
     <Router history={history}>
       <ThemeProvider theme={theme.main}>
         <React.Fragment>
-          <CSSNormalize />
-          <CSSCollecticons />
-          <GlobalStyle />
+          <GlobalStyles />
           <Switch>
             <Route exact path='/' component={Home} />
             <Route exact path='/playground' component={Playground} />
