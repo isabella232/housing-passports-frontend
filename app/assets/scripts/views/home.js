@@ -1,14 +1,19 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
+import { PropTypes as T } from 'prop-types';
+import { connect } from 'react-redux';
 
+import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
 import collecticon from '../atomic-components/collecticons';
+import { wrapApiResult } from '../utils/utils';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
 import MapillaryView from '../components/mapillary';
 import MapboxView from '../components/mapbox';
+import { fetchRooftopCentroids } from '../redux/rooftops';
 
 const Page = styled.section`
   display: grid;
@@ -17,11 +22,13 @@ const Page = styled.section`
 `;
 
 const PageHeader = styled.header`
+  position: relative;
+  z-index: 10;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 0 16px 4px ${themeVal('colors.baseAlphaColor')};
+  box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
 
   > *:last-child {
     margin-left: auto;
@@ -68,13 +75,11 @@ const ButtonOverheadViz = styled(Button)`
   }
 `;
 
-const PageBody = styled.main`
-`;
-
 const Visualizations = styled.div`
   display: grid;
   height: 100%;
 
+  /* stylelint-disable-next-line */
   > * {
     display: flex;
     justify-content: center;
@@ -90,32 +95,142 @@ const StreetViz = styled.section`
 
 const OverheadViz = styled.section`
   position: relative;
-  grid-row: 2 / span 1;
+  grid-row: auto / span 1;
 `;
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      mapillaryPos: [-74.1613, 4.5481],
+      mapillaryBearing: 0,
+
+      hoverFeatureId: null,
+
+      vizView: 'split'
+    };
+
+    this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
+    this.onMapillaryBearingChange = this.onMapillaryBearingChange.bind(this);
+    this.onMapillaryMarkerHover = this.onMapillaryMarkerHover.bind(this);
+
+    this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
+  }
+
+  componentDidMount () {
+    this.props.fetchRooftopCentroids();
+  }
+
+  onMapillaryCoordsChange (lnglat) {
+    this.setState({ mapillaryPos: lnglat });
+  }
+
+  onMapillaryBearingChange (bearing) {
+    this.setState({ mapillaryBearing: bearing });
+  }
+
+  onMapillaryMarkerHover (id) {
+    this.setState({ hoverFeatureId: id });
+  }
+
+  onMapboxFeatureHover (id) {
+    this.setState({ hoverFeatureId: id });
+  }
+
+  onVizViewClick (type) {
+    this.setState({ vizView: type });
+  }
+
   render () {
     return (
       <Page>
         <PageHeader>
-          <PageTitle>Housing Passports <small>Colombia</small></PageTitle>
+          <PageTitle>
+            Housing Passports <small>Colombia</small>
+          </PageTitle>
           <ButtonGroup orientation='horizontal'>
-            <ButtonSplitViz variation='base-raised-light' hideText active>Split</ButtonSplitViz>
-            <ButtonStreetViz variation='base-raised-light' hideText>Street</ButtonStreetViz>
-            <ButtonOverheadViz variation='base-raised-light' hideText>Overhead</ButtonOverheadViz>
+            <ButtonSplitViz
+              variation='base-raised-light'
+              hideText
+              title='Change to split view'
+              active={this.state.vizView === 'split'}
+              onClick={this.onVizViewClick.bind(this, 'split')}
+            >
+              Split
+            </ButtonSplitViz>
+            <ButtonStreetViz
+              variation='base-raised-light'
+              hideText
+              title='Change to street view'
+              active={this.state.vizView === 'street'}
+              onClick={this.onVizViewClick.bind(this, 'street')}
+            >
+              Street
+            </ButtonStreetViz>
+            <ButtonOverheadViz
+              variation='base-raised-light'
+              hideText
+              title='Change to overhead view'
+              active={this.state.vizView === 'overhead'}
+              onClick={this.onVizViewClick.bind(this, 'overhead')}
+            >
+              Overhead
+            </ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
-        <PageBody>
+        <main>
           <Visualizations>
-            <StreetViz>
-              <MapillaryView />
-            </StreetViz>
-            <OverheadViz>
-              <MapboxView />
-            </OverheadViz>
+            {this.state.vizView !== 'overhead' && (
+              <StreetViz>
+                <MapillaryView
+                  vizView={this.state.vizView}
+                  rooftopCentroids={this.props.rooftopCentroids.getData(null)}
+                  onCoordinatesChange={this.onMapillaryCoordsChange}
+                  onBearingChange={this.onMapillaryBearingChange}
+                  onMarkerHover={this.onMapillaryMarkerHover}
+                  highlightMarkerId={this.state.hoverFeatureId}
+                />
+              </StreetViz>
+            )}
+
+            {this.state.vizView !== 'street' && (
+              <OverheadViz>
+                <MapboxView
+                  vizView={this.state.vizView}
+                  markerPos={this.state.mapillaryPos}
+                  markerBearing={this.state.mapillaryBearing}
+                  onFeatureHover={this.onMapboxFeatureHover}
+                  highlightFeatureId={this.state.hoverFeatureId}
+                />
+              </OverheadViz>
+            )}
           </Visualizations>
-        </PageBody>
+        </main>
       </Page>
     );
   }
 }
+
+if (environment !== 'production') {
+  Home.propTypes = {
+    fetchRooftopCentroids: T.func,
+    rooftopCentroids: T.object
+  };
+}
+
+function mapStateToProps (state) {
+  return {
+    rooftopCentroids: wrapApiResult(state.rooftops.centroids)
+  };
+}
+
+function dispatcher (dispatch) {
+  return {
+    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args))
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  dispatcher
+)(Home);
