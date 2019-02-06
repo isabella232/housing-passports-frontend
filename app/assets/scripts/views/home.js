@@ -18,21 +18,46 @@ import { fetchRooftopCentroids } from '../redux/rooftops';
 const Page = styled.section`
   display: grid;
   min-height: 100vh;
-  grid-template-rows: auto 1fr;
+  grid: [row1-start] "major minor" 4rem [row1-end] [row2-start] "major minor" auto [row2-end] / auto 20rem;
 `;
 
 const PageHeader = styled.header`
+  grid-area: major;
   position: relative;
   z-index: 10;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  height: 4rem;
+  background: #fff;
   padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
 
   > *:last-child {
     margin-left: auto;
   }
+`;
+
+const Visualizations = styled.main`
+  grid-area: major;
+  display: grid;
+
+  /* stylelint-disable-next-line */
+  > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  }
+`;
+
+const Passport = styled.article`
+  grid-area: minor;
+  position: relative;
+  z-index: 20;
+  background: #fff;
+  padding: ${themeVal('layout.globalSpacing')};
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
 `;
 
 const PageTitle = styled.h1`
@@ -72,19 +97,6 @@ const ButtonStreetViz = styled(Button)`
 const ButtonOverheadViz = styled(Button)`
   ::before {
     ${collecticon('map')}
-  }
-`;
-
-const Visualizations = styled.div`
-  display: grid;
-  height: 100%;
-
-  /* stylelint-disable-next-line */
-  > * {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
   }
 `;
 
@@ -178,34 +190,35 @@ class Home extends React.Component {
             </ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
-        <main>
-          <Visualizations>
-            {this.state.vizView !== 'overhead' && (
-              <StreetViz>
-                <MapillaryView
-                  vizView={this.state.vizView}
-                  rooftopCentroids={this.props.rooftopCentroids.getData(null)}
-                  onCoordinatesChange={this.onMapillaryCoordsChange}
-                  onBearingChange={this.onMapillaryBearingChange}
-                  onMarkerHover={this.onMapillaryMarkerHover}
-                  highlightMarkerId={this.state.hoverFeatureId}
-                />
-              </StreetViz>
-            )}
+        <Visualizations>
+          {this.state.vizView !== 'overhead' && (
+            <StreetViz>
+              <MapillaryView
+                vizView={this.state.vizView}
+                rooftopCentroids={this.props.rooftopCentroids.getData(null)}
+                onCoordinatesChange={this.onMapillaryCoordsChange}
+                onBearingChange={this.onMapillaryBearingChange}
+                onMarkerHover={this.onMapillaryMarkerHover}
+                highlightMarkerId={this.state.hoverFeatureId}
+              />
+            </StreetViz>
+          )}
 
-            {this.state.vizView !== 'street' && (
-              <OverheadViz>
-                <MapboxView
-                  vizView={this.state.vizView}
-                  markerPos={this.state.mapillaryPos}
-                  markerBearing={this.state.mapillaryBearing}
-                  onFeatureHover={this.onMapboxFeatureHover}
-                  highlightFeatureId={this.state.hoverFeatureId}
-                />
-              </OverheadViz>
-            )}
-          </Visualizations>
-        </main>
+          {this.state.vizView !== 'street' && (
+            <OverheadViz>
+              <MapboxView
+                vizView={this.state.vizView}
+                markerPos={this.state.mapillaryPos}
+                markerBearing={this.state.mapillaryBearing}
+                onFeatureHover={this.onMapboxFeatureHover}
+                highlightFeatureId={this.state.hoverFeatureId}
+              />
+            </OverheadViz>
+          )}
+        </Visualizations>
+        <Passport>
+
+        </Passport>
       </Page>
     );
   }
