@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const gulp = require('gulp');
-const cp = require('child_process');
 const $ = require('gulp-load-plugins')();
 const del = require('del');
 const browserSync = require('browser-sync');
@@ -13,6 +12,10 @@ const log = require('fancy-log');
 const notifier = require('node-notifier');
 const historyApiFallback = require('connect-history-api-fallback');
 const through2 = require('through2');
+
+const {
+  compile: collecticonsCompile
+} = require('collecticons-processor');
 
 // /////////////////////////////////////////////////////////////////////////////
 // --------------------------- Variables -------------------------------------//
@@ -94,7 +97,6 @@ module.exports.default = gulp.series(
     vendorScripts,
     javascript
   ),
-  () => gulp.src('app/assets/styles/collecticons.css').pipe(gulp.dest('dist/assets/styles/')),
   gulp.parallel(
     html,
     imagesImagemin
@@ -167,25 +169,16 @@ function vendorScripts () {
 // --------------------- (Font generation related) ---------------------------//
 // ---------------------------------------------------------------------------//
 function collecticons () {
-  var args = [
-    'node_modules/collecticons-processor/bin/collecticons.js',
-    'compile',
-    'app/assets/icons/collecticons/',
-    '--font-embed',
-    '--font-dest', 'app/assets/fonts',
-    '--font-name', 'Collecticons',
-    '--font-types', 'woff',
-    '--style-format', 'css',
-    '--style-dest', 'app/assets/styles/',
-    '--style-name', 'collecticons',
-    '--class-name', 'collecticon',
-    '--author-name', 'Development Seed',
-    '--author-url', 'https://developmentseed.org/',
-    '--no-preview',
-    '--catalog-dest', 'app/assets/scripts/atomic-components/collecticons/'
-  ];
-
-  return cp.spawn('node', args, { stdio: 'inherit' });
+  return collecticonsCompile({
+    dirPath: 'app/assets/icons/collecticons/',
+    fontName: 'Collecticons',
+    authorName: 'Development Seed',
+    authorUrl: 'https://developmentseed.org/',
+    catalogDest: 'app/assets/scripts/atomic-components/collecticons/',
+    preview: false,
+    experimentalFontOnCatalog: true,
+    experimentalDisableStyles: true
+  });
 }
 
 // //////////////////////////////////////////////////////////////////////////////

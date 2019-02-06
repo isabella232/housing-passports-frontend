@@ -52,10 +52,12 @@ export default Object.keys(mediaRanges).reduce((acc, label) => {
         [`${label}${type}`]: (...args) => {
           let expr = buildMediaExp(range, type);
           if (expr === null && (type === 'Up' || type === 'Down')) {
+            // eslint-disable-next-line
             console.warn(`Media query warning: The specified media query (${label}${type}) has no ${range[0] === null ? 'lower' : 'upper'} bound.
 There's no need for a media query in this case;
 `);
           } else if (expr === null) {
+            // eslint-disable-next-line
             console.warn(`Media query warning: The specified media query (${label}${type}) has no ${range[0] === null ? 'lower' : 'upper'} bound.
 You can use (${label}${range[0] === null ? 'Down' : 'Up'}) instead.
 `);

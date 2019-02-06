@@ -1,6 +1,12 @@
 import { css } from 'styled-components';
 
-export const visuallyHidden = css`
+export const antialiased = () => css`
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+`;
+
+// Hide only visually, but have it available for screenreaders
+export const visuallyHidden = () => css`
   border: 0 none;
   clip: rect(0px, 0px, 0px, 0px);
   height: 1px;
