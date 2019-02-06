@@ -1,5 +1,6 @@
 'use strict';
 
 export default {
-  environment: 'production'
+  environment: 'production',
+  baseurl: 'http://localhost:3000'
 };

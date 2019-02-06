@@ -1,14 +1,19 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
+import { PropTypes as T } from 'prop-types';
+import { connect } from 'react-redux';
 
+import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
 import collecticon from '../atomic-components/collecticons';
+import { wrapApiResult } from '../utils/utils';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
 import MapillaryView from '../components/mapillary';
 import MapboxView from '../components/mapbox';
+import { fetchRooftopCentroids } from '../redux/rooftops';
 
 const Page = styled.section`
   display: grid;
@@ -91,7 +96,43 @@ const OverheadViz = styled.section`
   grid-row: 2 / span 1;
 `;
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      mapillaryPos: [-74.1613, 4.5481],
+      mapillaryBearing: 0,
+
+      hoverFeatureId: null
+    };
+
+    this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
+    this.onMapillaryBearingChange = this.onMapillaryBearingChange.bind(this);
+    this.onMapillaryMarkerHover = this.onMapillaryMarkerHover.bind(this);
+
+    this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
+  }
+
+  componentDidMount () {
+    this.props.fetchRooftopCentroids();
+  }
+
+  onMapillaryCoordsChange (lnglat) {
+    this.setState({ mapillaryPos: lnglat });
+  }
+
+  onMapillaryBearingChange (bearing) {
+    this.setState({ mapillaryBearing: bearing });
+  }
+
+  onMapillaryMarkerHover (id) {
+    this.setState({ hoverFeatureId: id });
+  }
+
+  onMapboxFeatureHover (id) {
+    this.setState({ hoverFeatureId: id });
+  }
+
   render () {
     return (
       <Page>
@@ -106,10 +147,21 @@ export default class Home extends React.Component {
         <main>
           <Visualizations>
             <StreetViz>
-              <MapillaryView />
+              <MapillaryView
+                rooftopCentroids={this.props.rooftopCentroids.getData(null)}
+                onCoordinatesChange={this.onMapillaryCoordsChange}
+                onBearingChange={this.onMapillaryBearingChange}
+                onMarkerHover={this.onMapillaryMarkerHover}
+                highlightMarkerId={this.state.hoverFeatureId}
+              />
             </StreetViz>
             <OverheadViz>
-              <MapboxView />
+              <MapboxView
+                markerPos={this.state.mapillaryPos}
+                markerBearing={this.state.mapillaryBearing}
+                onFeatureHover={this.onMapboxFeatureHover}
+                highlightFeatureId={this.state.hoverFeatureId}
+              />
             </OverheadViz>
           </Visualizations>
         </main>
@@ -117,3 +169,24 @@ export default class Home extends React.Component {
     );
   }
 }
+
+if (environment !== 'production') {
+  Home.propTypes = {
+    fetchRooftopCentroids: T.func,
+    rooftopCentroids: T.object
+  };
+}
+
+function mapStateToProps (state) {
+  return {
+    rooftopCentroids: wrapApiResult(state.rooftops.centroids)
+  };
+}
+
+function dispatcher (dispatch) {
+  return {
+    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args))
+  };
+}
+
+export default connect(mapStateToProps, dispatcher)(Home);
