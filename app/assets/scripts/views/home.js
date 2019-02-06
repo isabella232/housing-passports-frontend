@@ -68,13 +68,11 @@ const ButtonOverheadViz = styled(Button)`
   }
 `;
 
-const PageBody = styled.main`
-`;
-
 const Visualizations = styled.div`
   display: grid;
   height: 100%;
 
+  /* stylelint-disable-next-line */
   > * {
     display: flex;
     justify-content: center;
@@ -105,7 +103,7 @@ export default class Home extends React.Component {
             <ButtonOverheadViz variation='base-raised-light' hideText>Overhead</ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
-        <PageBody>
+        <main>
           <Visualizations>
             <StreetViz>
               <MapillaryView />
@@ -114,7 +112,7 @@ export default class Home extends React.Component {
               <MapboxView />
             </OverheadViz>
           </Visualizations>
-        </PageBody>
+        </main>
       </Page>
     );
   }
