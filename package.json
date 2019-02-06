@@ -94,6 +94,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.6",
     "history": "^4.7.2",
     "lodash.defaultsdeep": "^4.6.0",
