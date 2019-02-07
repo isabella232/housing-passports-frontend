@@ -119,14 +119,18 @@ class Home extends React.Component {
 
       hoverFeatureId: null,
 
+      selectedFeatureId: null,
+
       vizView: 'split'
     };
 
     this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
     this.onMapillaryBearingChange = this.onMapillaryBearingChange.bind(this);
     this.onMapillaryMarkerHover = this.onMapillaryMarkerHover.bind(this);
+    this.onMapillaryMarkerClick = this.onMapillaryMarkerClick.bind(this);
 
     this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
+    this.onMapboxFeatureClick = this.onMapboxFeatureClick.bind(this);
   }
 
   componentDidMount () {
@@ -147,6 +151,14 @@ class Home extends React.Component {
 
   onMapboxFeatureHover (id) {
     this.setState({ hoverFeatureId: id });
+  }
+
+  onMapillaryMarkerClick (id) {
+    this.setState({ selectedFeatureId: id });
+  }
+
+  onMapboxFeatureClick (id) {
+    this.setState({ selectedFeatureId: id });
   }
 
   onVizViewClick (type) {
@@ -199,7 +211,9 @@ class Home extends React.Component {
                 onCoordinatesChange={this.onMapillaryCoordsChange}
                 onBearingChange={this.onMapillaryBearingChange}
                 onMarkerHover={this.onMapillaryMarkerHover}
+                onMarkerClick={this.onMapillaryMarkerClick}
                 highlightMarkerId={this.state.hoverFeatureId}
+                selectedMarkerId={this.state.selectedFeatureId}
               />
             </StreetViz>
           )}
@@ -211,7 +225,9 @@ class Home extends React.Component {
                 markerPos={this.state.mapillaryPos}
                 markerBearing={this.state.mapillaryBearing}
                 onFeatureHover={this.onMapboxFeatureHover}
+                onFeatureClick={this.onMapboxFeatureClick}
                 highlightFeatureId={this.state.hoverFeatureId}
+                selectedFeatureId={this.state.selectedFeatureId}
               />
             </OverheadViz>
           )}
