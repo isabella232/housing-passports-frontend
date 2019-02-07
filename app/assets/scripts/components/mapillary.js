@@ -61,9 +61,7 @@ class MapillaryView extends React.PureComponent {
     this.mly.on(Mapillary.Viewer.bearingchanged, this.onBearingChangeDebounced);
 
     const getMarkerIdAtPoint = async point => {
-      const marker = await this.mly
-        .getComponent('marker')
-        .getMarkerIdAt(point);
+      const marker = await this.mly.getComponent('marker').getMarkerIdAt(point);
       return marker ? parseInt(marker.split('-')[1]) : null;
     };
 
@@ -75,7 +73,7 @@ class MapillaryView extends React.PureComponent {
 
     this.mly.on('click', async e => {
       const id = await getMarkerIdAtPoint(e.pixelPoint);
-      if (id !== null && id !== this.props.selectedMarkerId) this.props.onMarkerClick(id);
+      if (id !== null && id !== this.props.selectedMarkerId) { this.props.onMarkerClick(id); }
     });
 
     this.setupMarkers(this.props);
