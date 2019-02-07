@@ -183,7 +183,18 @@ class MapillaryView extends React.PureComponent {
       );
     });
 
-    this.mly.getComponent('marker').add(markers);
+    const markerComponent = this.mly.getComponent('marker');
+    markerComponent.add(markers);
+    markerComponent.on('dragstart', () => {
+      // To get a marker at the cursor position we need to use the
+      // getMarkerIdAt method which only works if the marker is created
+      // as interactive. However creating and interactive marker results in it
+      // being draggable and there is no apparent way of preventing this
+      // while keep the getMarkerIdAt method working.
+      // This v works... Go figure.
+      markerComponent.deactivate();
+      markerComponent.activate();
+    });
 
     this.markersSetupDone = true;
   }
