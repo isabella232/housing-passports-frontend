@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
+import { add, subtract, multiply, divide } from '../atomic-components/utils/math';
 import collecticon from '../atomic-components/collecticons';
 import { wrapApiResult } from '../utils/utils';
 
@@ -18,46 +19,27 @@ import { fetchRooftopCentroids } from '../redux/rooftops';
 const Page = styled.section`
   display: grid;
   min-height: 100vh;
-  grid: [row1-start] "major minor" 4rem [row1-end] [row2-start] "major minor" auto [row2-end] / auto 20rem;
+  /* grid: [row1-start] "major minor" 4rem [row1-end] [row2-start] "major minor" auto [row2-end] / auto 20rem; */
+  grid-auto-columns: 1fr 20rem;
+  grid-auto-rows: auto 1fr;
+}
 `;
 
 const PageHeader = styled.header`
-  grid-area: major;
+  grid-column: 1;
   position: relative;
   z-index: 10;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  height: 4rem;
   background: #fff;
   padding: ${themeVal('layout.globalSpacing')};
   box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
+  min-height: 4rem;
 
   > *:last-child {
     margin-left: auto;
   }
-`;
-
-const Visualizations = styled.main`
-  grid-area: major;
-  display: grid;
-
-  /* stylelint-disable-next-line */
-  > * {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
-  }
-`;
-
-const Passport = styled.article`
-  grid-area: minor;
-  position: relative;
-  z-index: 20;
-  background: #fff;
-  padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
 `;
 
 const PageTitle = styled.h1`
@@ -100,6 +82,19 @@ const ButtonOverheadViz = styled(Button)`
   }
 `;
 
+const Visualizations = styled.main`
+  grid-column: 1;
+  display: grid;
+
+  /* stylelint-disable-next-line */
+  > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  }
+`;
+
 const StreetViz = styled.section`
   position: relative;
   grid-row: auto / span 1;
@@ -108,6 +103,59 @@ const StreetViz = styled.section`
 const OverheadViz = styled.section`
   position: relative;
   grid-row: auto / span 1;
+`;
+
+const Passport = styled.article`
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  position: relative;
+  z-index: 20;
+  background: #fff;
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
+  overflow: hidden;
+`;
+
+const PassportHeader = styled.header`
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  background: #fff;
+  padding: ${themeVal('layout.globalSpacing')};
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
+  min-height: 4rem;
+`;
+
+const PassportTitle = styled.h1`
+  font-family: ${themeVal('typography.headingFontFamily')};
+  font-weight: ${themeVal('typography.headingFontWeight')};
+  letter-spacing: 0.125em;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  text-transform: uppercase;
+  color: ${themeVal('colors.primaryColor')};
+  margin: 0;
+`;
+
+const PassportToolbar = styled.div`
+
+`;
+
+const HorizontalDivider = styled.hr`
+  border: 0;
+  height: ${divide(themeVal('layout.globalSpacing'), 2)};
+  width: ${themeVal('layout.globalSpacing')};
+  margin: ${divide(themeVal('layout.globalSpacing'), 4)} 0;
+  background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-x;
+`;
+
+const VerticalDivider = styled.hr`
+  border: 0;
+  width: ${divide(themeVal('layout.globalSpacing'), 2)};
+  height: ${themeVal('layout.globalSpacing')};
+  margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
+  background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
 `;
 
 class Home extends React.Component {
@@ -233,7 +281,12 @@ class Home extends React.Component {
           )}
         </Visualizations>
         <Passport>
-
+          <PassportHeader>
+            <PassportTitle>Passport</PassportTitle>
+            <PassportToolbar>
+              <VerticalDivider />
+            </PassportToolbar>
+          </PassportHeader>
         </Passport>
       </Page>
     );
