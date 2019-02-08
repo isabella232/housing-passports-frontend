@@ -57,7 +57,9 @@ export default class Dropdown extends React.Component {
 
     const getClosestInstance = (el) => {
       do {
-        if (el && el.hasAttribute('data-drop-instance')) {
+        // If the click is released outside the view port, the el will be
+        // HTMLDocument and won't have hasAttribute method.
+        if (el && el.hasAttribute && el.hasAttribute('data-drop-instance')) {
           return el;
         }
         el = el.parentNode;

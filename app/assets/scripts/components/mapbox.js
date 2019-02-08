@@ -15,6 +15,7 @@ import AbsoluteContainer from '../atomic-components/absolute-container';
 import MapboxControl from './mapbox-react-control';
 import LayerControlDropdown from './map-layer-control';
 import collecticon from '../atomic-components/collecticons';
+import { lighten } from 'polished';
 
 // set once
 mapboxgl.accessToken = mbtoken;
@@ -78,6 +79,15 @@ class MapboxView extends React.PureComponent {
         hl === null ? '' : hl
       ]);
     }
+
+    const sel = this.props.selectedFeatureId;
+    if (sel !== prevProps.selectedFeatureId && this.mapState >= 2) {
+      this.map.setFilter('rooftop-selected', [
+        '==',
+        'id',
+        sel === null ? '' : sel
+      ]);
+    }
   }
 
   initMap () {
@@ -122,16 +132,24 @@ class MapboxView extends React.PureComponent {
       this.mapState = 1;
       this.initMapStyle(this.props);
 
-      const mouseMoveDebounced = throttle(e => {
-        const features = this.map.queryRenderedFeatures(e.point, {
+      const getFeatIdAtPoint = point => {
+        const features = this.map.queryRenderedFeatures(point, {
           layers: ['rooftops']
         });
-        const id = features.length ? features[0].properties.id : null;
+        return features.length ? features[0].properties.id : null;
+      };
 
+      const mouseMoveDebounced = throttle(e => {
+        const id = getFeatIdAtPoint(e.point);
         if (id !== this.props.highlightFeatureId) this.props.onFeatureHover(id);
       }, 100);
 
       this.map.on('mousemove', mouseMoveDebounced);
+
+      this.map.on('click', e => {
+        const id = getFeatIdAtPoint(e.point);
+        if (id !== null && id !== this.props.selectedFeatureId) this.props.onFeatureClick(id);
+      });
     });
   }
 
@@ -149,7 +167,7 @@ class MapboxView extends React.PureComponent {
     marker.className = 'marker-mapillary-position';
 
     this.mapillaryPositionMarker = new mapboxgl.Marker(marker)
-      .setLngLat(this.props.markerPos)
+      .setLngLat(props.markerPos)
       .addTo(this.map);
 
     this.map.addLayer({
@@ -158,20 +176,32 @@ class MapboxView extends React.PureComponent {
       'source-layer': 'rooftops',
       type: 'fill',
       paint: {
-        'fill-color': this.props.theme.colors.secondaryColor
+        'fill-color': props.theme.colors.secondaryColor
       }
     });
 
-    const hl = this.props.highlightFeatureId;
+    const hl = props.highlightFeatureId;
     this.map.addLayer({
       id: 'rooftop-highlight',
       source: 'housing-passports-rooftops',
       'source-layer': 'rooftops',
       type: 'fill',
       paint: {
-        'fill-color': this.props.theme.colors.primaryColor
+        'fill-color': lighten(0.2, props.theme.colors.primaryColor)
       },
       filter: ['==', 'id', hl === null ? '' : hl]
+    });
+
+    const sel = props.selectedFeatureId;
+    this.map.addLayer({
+      id: 'rooftop-selected',
+      source: 'housing-passports-rooftops',
+      'source-layer': 'rooftops',
+      type: 'fill',
+      paint: {
+        'fill-color': props.theme.colors.primaryColor
+      },
+      filter: ['==', 'id', sel === null ? '' : sel]
     });
 
     // Map fully setup.
@@ -196,8 +226,10 @@ if (environment !== 'production') {
     theme: T.object,
     vizView: T.string,
     onFeatureHover: T.func,
+    onFeatureClick: T.func,
     markerPos: T.array,
     markerBearing: T.number,
-    highlightFeatureId: T.number
+    highlightFeatureId: T.number,
+    selectedFeatureId: T.number
   };
 }

@@ -7,6 +7,7 @@ import throttle from 'lodash.throttle';
 
 import { mapillaryClientId, environment } from '../config';
 import { visuallyHidden } from '../atomic-components/utils';
+import { lighten } from 'polished';
 
 import AbsoluteContainer from '../atomic-components/absolute-container';
 
@@ -59,14 +60,20 @@ class MapillaryView extends React.PureComponent {
     // Update the bearing on rotation.
     this.mly.on(Mapillary.Viewer.bearingchanged, this.onBearingChangeDebounced);
 
+    const getMarkerIdAtPoint = async point => {
+      const marker = await this.mly.getComponent('marker').getMarkerIdAt(point);
+      return marker ? parseInt(marker.split('-')[1]) : null;
+    };
+
     // Highlight the marker on mouse move.
     this.mly.on('mousemove', async e => {
-      const marker = await this.mly
-        .getComponent('marker')
-        .getMarkerIdAt(e.pixelPoint);
-      const id = marker ? parseInt(marker.split('-')[1]) : null;
-
+      const id = await getMarkerIdAtPoint(e.pixelPoint);
       if (id !== this.props.highlightMarkerId) this.props.onMarkerHover(id);
+    });
+
+    this.mly.on('click', async e => {
+      const id = await getMarkerIdAtPoint(e.pixelPoint);
+      if (id !== null && id !== this.props.selectedMarkerId) { this.props.onMarkerClick(id); }
     });
 
     this.setupMarkers(this.props);
@@ -79,28 +86,60 @@ class MapillaryView extends React.PureComponent {
       this.mly.resize();
     }
 
+    const markerComponent = this.mly.getComponent('marker');
+    // Store the markers to update.
+    // Since ids are numeric we can use an array.
+    let markers = [];
+
+    const hlMarker = this.props.highlightMarkerId;
+    const prevHlMarker = prevProps.highlightMarkerId;
+    const selMarker = this.props.selectedMarkerId;
+    const prevSelMarker = prevProps.selectedMarkerId;
+
     // Highlight the marker.
     // De-highlight the previous one.
-    const hl = this.props.highlightMarkerId;
-    const prevHl = prevProps.highlightMarkerId;
-    if (hl !== prevHl) {
-      const markerComponent = this.mly.getComponent('marker');
-      let markers = [];
-      if (prevHl !== null) {
-        markers.push(
-          this.createMarker(
-            prevHl,
-            markerComponent.get(`rooftop-${prevHl}`).latLon,
-            false
-          )
-        );
+    if (hlMarker !== prevHlMarker) {
+      if (prevHlMarker !== null) {
+        markers[prevHlMarker] = {
+          id: prevHlMarker,
+          latLon: markerComponent.get(`rooftop-${prevHlMarker}`).latLon,
+          type: prevHlMarker === selMarker ? 'selected' : 'normal'
+        };
       }
-      if (hl !== null) {
-        markers.push(
-          this.createMarker(hl, markerComponent.get(`rooftop-${hl}`).latLon, true)
-        );
+      if (hlMarker !== null) {
+        markers[hlMarker] = {
+          id: hlMarker,
+          latLon: markerComponent.get(`rooftop-${hlMarker}`).latLon,
+          type: 'hover'
+        };
       }
-      markerComponent.add(markers);
+    }
+
+    // Select the marker.
+    // De-select the previous one.
+    if (selMarker !== prevSelMarker) {
+      if (prevSelMarker !== null) {
+        markers[prevSelMarker] = {
+          id: prevSelMarker,
+          latLon: markerComponent.get(`rooftop-${prevSelMarker}`).latLon,
+          type: 'normal'
+        };
+      }
+      if (selMarker !== null) {
+        markers[selMarker] = {
+          id: selMarker,
+          latLon: markerComponent.get(`rooftop-${selMarker}`).latLon,
+          type: 'selected'
+        };
+      }
+    }
+
+    if (markers.length) {
+      markerComponent.add(
+        markers
+          .filter(Boolean)
+          .map(m => this.createMarker(m.id, m.latLon, m.type))
+      );
     }
   }
 
@@ -111,9 +150,15 @@ class MapillaryView extends React.PureComponent {
    * @param {object} coords Coordinates { lon, lat }
    * @param {boolean} hover Whether or not the marker is hovered.
    */
-  createMarker (id, coords, hover) {
+  createMarker (id, coords, type) {
     const { primaryColor, secondaryColor } = this.props.theme.colors;
-    const markerColor = hover ? primaryColor : secondaryColor;
+    const markerColor =
+      type === 'hover'
+        ? lighten(0.2, primaryColor)
+        : type === 'selected'
+          ? primaryColor
+          : secondaryColor;
+
     return new Mapillary.MarkerComponent.SimpleMarker(`rooftop-${id}`, coords, {
       interactive: true,
       color: markerColor
@@ -124,16 +169,32 @@ class MapillaryView extends React.PureComponent {
     const { rooftopCentroids } = props;
     if (this.markersSetupDone || !rooftopCentroids) return;
 
+    const { highlightMarkerId, selectedMarkerId } = this.props;
     const markers = rooftopCentroids.map(element => {
       const [lon, lat] = element.coords;
       return this.createMarker(
         element.id,
         { lon, lat },
-        this.props.highlightMarkerId === element.id
+        highlightMarkerId === element.id
+          ? 'hover'
+          : selectedMarkerId === element.id
+            ? 'selected'
+            : 'normal'
       );
     });
 
-    this.mly.getComponent('marker').add(markers);
+    const markerComponent = this.mly.getComponent('marker');
+    markerComponent.add(markers);
+    markerComponent.on('dragstart', () => {
+      // To get a marker at the cursor position we need to use the
+      // getMarkerIdAt method which only works if the marker is created
+      // as interactive. However creating and interactive marker results in it
+      // being draggable and there is no apparent way of preventing this
+      // while keep the getMarkerIdAt method working.
+      // This v works... Go figure.
+      markerComponent.deactivate();
+      markerComponent.activate();
+    });
 
     this.markersSetupDone = true;
   }
@@ -157,7 +218,9 @@ if (environment !== 'production') {
     onCoordinatesChange: T.func,
     onBearingChange: T.func,
     onMarkerHover: T.func,
+    onMarkerClick: T.func,
     rooftopCentroids: T.array,
-    highlightMarkerId: T.number
+    highlightMarkerId: T.number,
+    selectedMarkerId: T.number
   };
 }
