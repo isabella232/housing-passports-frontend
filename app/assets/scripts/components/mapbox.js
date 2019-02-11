@@ -63,7 +63,13 @@ class MapboxView extends React.PureComponent {
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.vizView !== prevProps.vizView) {
+    // When the view changes or when a feature is selected / de-selected
+    // resize the map.
+    if (
+      this.props.vizView !== prevProps.vizView ||
+      prevProps.selectedFeatureId === null ||
+      this.props.selectedFeatureId === null
+    ) {
       this.map.resize();
     }
 
@@ -148,7 +154,7 @@ class MapboxView extends React.PureComponent {
 
       this.map.on('click', e => {
         const id = getFeatIdAtPoint(e.point);
-        if (id !== null && id !== this.props.selectedFeatureId) this.props.onFeatureClick(id);
+        if (id !== null && id !== this.props.selectedFeatureId) { this.props.onFeatureClick(id); }
       });
     });
   }
