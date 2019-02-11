@@ -21,12 +21,17 @@ export function requestRooftopCentroids () {
 }
 
 export function receiveRooftopCentroids (data, error = null) {
-  return { type: RECEIVE_ROOFTOP_CENTROIDS, data, error, receivedAt: Date.now() };
+  return {
+    type: RECEIVE_ROOFTOP_CENTROIDS,
+    data,
+    error,
+    receivedAt: Date.now()
+  };
 }
 
 export function fetchRooftopCentroids () {
   return fetchDispatchCacheFactory({
-    statePath: 'centroids',
+    statePath: 'rooftops.centroids',
     url: `${baseurl}/assets/data/rooftops-centroids.json`,
     requestFn: requestRooftopCentroids,
     receiveFn: receiveRooftopCentroids,
@@ -45,8 +50,57 @@ const rooftopCentroidsReducerInitialState = {
   data: []
 };
 
-function rooftopCentroidsReducer (state = rooftopCentroidsReducerInitialState, action) {
+function rooftopCentroidsReducer (
+  state = rooftopCentroidsReducerInitialState,
+  action
+) {
   return baseAPIReducer(state, action, 'ROOFTOP_CENTROIDS');
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Actions
+// /////////////////////////////////////////////////////////////////////////////
+
+export const REQUEST_ROOFTOP = 'REQUEST_ROOFTOP';
+export const RECEIVE_ROOFTOP = 'RECEIVE_ROOFTOP';
+export const INVALIDATE_ROOFTOP = 'INVALIDATE_ROOFTOP';
+
+export function invalidateRooftop (id) {
+  return { type: INVALIDATE_ROOFTOP, id };
+}
+
+export function requestRooftop (id) {
+  return { type: REQUEST_ROOFTOP, id };
+}
+
+export function receiveRooftop (id, data, error = null) {
+  return { type: RECEIVE_ROOFTOP, id, data, error, receivedAt: Date.now() };
+}
+
+export function fetchRooftop (rooftopId) {
+  return fetchDispatchCacheFactory({
+    statePath: ['rooftops', 'individualRooftops', rooftopId],
+    url: `${baseurl}/assets/data/rooftops/${rooftopId}.json`,
+    requestFn: requestRooftop.bind(this, rooftopId),
+    receiveFn: receiveRooftop.bind(this, rooftopId)
+  });
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Reducer
+// /////////////////////////////////////////////////////////////////////////////
+
+const rooftopReducerInitialState = {
+  // rooftopId: {
+  //   fetching: false,
+  //   fetched: false,
+  //   error: null,
+  //   data: []
+  // }
+};
+
+function rooftopReducer (state = rooftopReducerInitialState, action) {
+  return baseAPIReducer(state, action, 'ROOFTOP');
 }
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -54,5 +108,6 @@ function rooftopCentroidsReducer (state = rooftopCentroidsReducerInitialState, a
 // /////////////////////////////////////////////////////////////////////////////
 
 export default combineReducers({
-  centroids: rooftopCentroidsReducer
+  centroids: rooftopCentroidsReducer,
+  individualRooftops: rooftopReducer
 });
