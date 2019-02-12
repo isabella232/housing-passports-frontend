@@ -2,7 +2,7 @@
 import styled, { keyframes, css } from 'styled-components';
 import { PropTypes as T } from 'prop-types';
 
-import { environment } from '../config';
+import { environment } from '../../config';
 import { rgba } from 'polished';
 
 const pulse = keyframes`

@@ -5,11 +5,11 @@ import * as Mapillary from 'mapillary-js';
 import styled, { withTheme } from 'styled-components';
 import throttle from 'lodash.throttle';
 
-import { mapillaryClientId, environment } from '../config';
-import { visuallyHidden } from '../atomic-components/utils';
+import { mapillaryClientId, environment } from '../../config';
+import { visuallyHidden } from '../../atomic-components/utils';
 import { lighten } from 'polished';
 
-import AbsoluteContainer from '../atomic-components/absolute-container';
+import AbsoluteContainer from '../../atomic-components/absolute-container';
 
 const MapillaryFigure = styled.figure`
   width: 100%;

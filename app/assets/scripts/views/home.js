@@ -6,16 +6,15 @@ import { connect } from 'react-redux';
 
 import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
-import { divide } from '../atomic-components/utils/math';
 import collecticon from '../atomic-components/collecticons';
 import { wrapApiResult, getFromState } from '../utils/utils';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
-import MapillaryView from '../components/mapillary';
-import MapboxView from '../components/mapbox';
+import MapillaryView from '../components/home/mapillary';
+import MapboxView from '../components/home/mapbox';
 import { fetchRooftopCentroids, fetchRooftop } from '../redux/rooftops';
-import { LoadingSkeleton, LoadingSkeletonGroup } from '../components/loading-skeleton';
+import Passport from '../components/home/passport';
 
 const Page = styled.section`
   display: grid;
@@ -106,59 +105,6 @@ const OverheadViz = styled.section`
   grid-row: auto / span 1;
 `;
 
-const Passport = styled.article`
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  position: relative;
-  z-index: 20;
-  background: #fff;
-  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
-  overflow: hidden;
-`;
-
-const PassportHeader = styled.header`
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  background: #fff;
-  padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
-  min-height: 4rem;
-`;
-
-const PassportTitle = styled.h1`
-  font-family: ${themeVal('typography.headingFontFamily')};
-  font-weight: ${themeVal('typography.headingFontWeight')};
-  letter-spacing: 0.125em;
-  font-size: 1rem;
-  line-height: 1.25rem;
-  text-transform: uppercase;
-  color: ${themeVal('colors.primaryColor')};
-  margin: 0;
-`;
-
-const PassportToolbar = styled.div`
-
-`;
-
-const HorizontalDivider = styled.hr`
-  border: 0;
-  height: ${divide(themeVal('layout.globalSpacing'), 2)};
-  width: ${themeVal('layout.globalSpacing')};
-  margin: ${divide(themeVal('layout.globalSpacing'), 4)} 0;
-  background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-x;
-`;
-
-const VerticalDivider = styled.hr`
-  border: 0;
-  width: ${divide(themeVal('layout.globalSpacing'), 2)};
-  height: ${themeVal('layout.globalSpacing')};
-  margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
-  background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
-`;
-
 class Home extends React.Component {
   constructor (props) {
     super(props);
@@ -224,45 +170,6 @@ class Home extends React.Component {
 
   onVizViewClick (type) {
     this.setState({ vizView: type });
-  }
-
-  renderPassport () {
-    const hasId = !!this.props.match.params.rooftop;
-    const { isReady, hasError, getData } = this.props.rooftop;
-
-    if (!hasId) return null;
-
-    const data = getData();
-
-    return (
-      <Passport>
-        <PassportHeader>
-          <PassportTitle>Passport</PassportTitle>
-          <PassportToolbar>
-            <VerticalDivider />
-          </PassportToolbar>
-        </PassportHeader>
-
-        {!isReady() && (
-          <LoadingSkeletonGroup>
-            <LoadingSkeleton type='heading' width={1 / 5}/>
-            <LoadingSkeleton width={2 / 3} />
-            <LoadingSkeleton width={2 / 3} />
-            <LoadingSkeleton width={1 / 4} />
-          </LoadingSkeletonGroup>
-        )}
-
-        {hasError() && (
-          <p>Passport not found</p>
-        )}
-
-        {!hasError() && isReady() && (
-          <pre>
-            {JSON.stringify(data, null, '  ')}
-          </pre>
-        )}
-      </Passport>
-    );
   }
 
   render () {
@@ -335,7 +242,11 @@ class Home extends React.Component {
             </OverheadViz>
           )}
         </Visualizations>
-        {this.renderPassport()}
+
+        <Passport
+          visible={!!this.props.match.params.rooftop}
+          rooftop={this.props.rooftop}
+        />
       </Page>
     );
   }

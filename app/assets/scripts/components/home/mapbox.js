@@ -9,12 +9,12 @@ import styled, {
   ThemeProvider
 } from 'styled-components';
 
-import { mbtoken, environment } from '../config';
-import { visuallyHidden } from '../atomic-components/utils';
-import AbsoluteContainer from '../atomic-components/absolute-container';
-import MapboxControl from './mapbox-react-control';
+import { mbtoken, environment } from '../../config';
+import { visuallyHidden } from '../../atomic-components/utils';
+import AbsoluteContainer from '../../atomic-components/absolute-container';
+import MapboxControl from '../common/mapbox-react-control';
 import LayerControlDropdown from './map-layer-control';
-import collecticon from '../atomic-components/collecticons';
+import collecticon from '../../atomic-components/collecticons';
 import { lighten } from 'polished';
 
 // set once

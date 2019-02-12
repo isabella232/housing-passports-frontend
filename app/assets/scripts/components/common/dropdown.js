@@ -5,8 +5,8 @@ import TetherComponent from 'react-tether';
 import { CSSTransition } from 'react-transition-group';
 import styled, { css } from 'styled-components';
 
-import { divide, multiply } from '../atomic-components/utils/math';
-import { themeVal } from '../atomic-components/utils/functions';
+import { divide, multiply } from '../../atomic-components/utils/math';
+import { themeVal } from '../../atomic-components/utils/functions';
 import { rgba } from 'polished';
 
 let activeDropdowns = [];

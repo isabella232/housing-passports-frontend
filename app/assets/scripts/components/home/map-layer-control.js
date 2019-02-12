@@ -3,11 +3,11 @@ import React from 'react';
 import { PropTypes as T } from 'prop-types';
 import styled from 'styled-components';
 
-import { environment } from '../config';
+import { environment } from '../../config';
 
-import Dropdown from './dropdown';
-import Button from '../atomic-components/button';
-import collecticon from '../atomic-components/collecticons';
+import Dropdown from '../common/dropdown';
+import Button from '../../atomic-components/button';
+import collecticon from '../../atomic-components/collecticons';
 
 const LayerButton = styled(Button)`
   ::before {
