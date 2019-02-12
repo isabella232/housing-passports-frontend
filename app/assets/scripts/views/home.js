@@ -6,23 +6,24 @@ import { connect } from 'react-redux';
 
 import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
-import { add, subtract, multiply, divide } from '../atomic-components/utils/math';
+import { divide } from '../atomic-components/utils/math';
 import collecticon from '../atomic-components/collecticons';
-import { wrapApiResult } from '../utils/utils';
+import { wrapApiResult, getFromState } from '../utils/utils';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
 import MapillaryView from '../components/mapillary';
 import MapboxView from '../components/mapbox';
-import { fetchRooftopCentroids } from '../redux/rooftops';
+import { fetchRooftopCentroids, fetchRooftop } from '../redux/rooftops';
+import { LoadingSkeleton, LoadingSkeletonGroup } from '../components/loading-skeleton';
 
 const Page = styled.section`
   display: grid;
   min-height: 100vh;
+
   /* grid: [row1-start] "major minor" 4rem [row1-end] [row2-start] "major minor" auto [row2-end] / auto 20rem; */
   grid-auto-columns: 1fr 20rem;
   grid-auto-rows: auto 1fr;
-}
 `;
 
 const PageHeader = styled.header`
@@ -167,8 +168,6 @@ class Home extends React.Component {
 
       hoverFeatureId: null,
 
-      selectedFeatureId: null,
-
       vizView: 'split'
     };
 
@@ -183,6 +182,20 @@ class Home extends React.Component {
 
   componentDidMount () {
     this.props.fetchRooftopCentroids();
+
+    const currId = this.props.match.params.rooftop;
+    if (currId) {
+      this.props.fetchRooftop(currId);
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    const currId = this.props.match.params.rooftop;
+    const prevId = prevProps.match.params.rooftop;
+
+    if (currId !== prevId) {
+      this.props.fetchRooftop(currId);
+    }
   }
 
   onMapillaryCoordsChange (lnglat) {
@@ -202,18 +215,60 @@ class Home extends React.Component {
   }
 
   onMapillaryMarkerClick (id) {
-    this.setState({ selectedFeatureId: id });
+    this.props.history.push(`/passport/${id}`);
   }
 
   onMapboxFeatureClick (id) {
-    this.setState({ selectedFeatureId: id });
+    this.props.history.push(`/passport/${id}`);
   }
 
   onVizViewClick (type) {
     this.setState({ vizView: type });
   }
 
+  renderPassport () {
+    const hasId = !!this.props.match.params.rooftop;
+    const { isReady, hasError, getData } = this.props.rooftop;
+
+    if (!hasId) return null;
+
+    const data = getData();
+
+    return (
+      <Passport>
+        <PassportHeader>
+          <PassportTitle>Passport</PassportTitle>
+          <PassportToolbar>
+            <VerticalDivider />
+          </PassportToolbar>
+        </PassportHeader>
+
+        {!isReady() && (
+          <LoadingSkeletonGroup>
+            <LoadingSkeleton type='heading' width={1 / 5}/>
+            <LoadingSkeleton width={2 / 3} />
+            <LoadingSkeleton width={2 / 3} />
+            <LoadingSkeleton width={1 / 4} />
+          </LoadingSkeletonGroup>
+        )}
+
+        {hasError() && (
+          <p>Passport not found</p>
+        )}
+
+        {!hasError() && isReady() && (
+          <pre>
+            {JSON.stringify(data, null, '  ')}
+          </pre>
+        )}
+      </Passport>
+    );
+  }
+
   render () {
+    const rooftopParam = this.props.match.params.rooftop;
+    const rooftopId = rooftopParam ? parseInt(rooftopParam) : null;
+
     return (
       <Page>
         <PageHeader>
@@ -261,7 +316,7 @@ class Home extends React.Component {
                 onMarkerHover={this.onMapillaryMarkerHover}
                 onMarkerClick={this.onMapillaryMarkerClick}
                 highlightMarkerId={this.state.hoverFeatureId}
-                selectedMarkerId={this.state.selectedFeatureId}
+                selectedMarkerId={rooftopId}
               />
             </StreetViz>
           )}
@@ -275,19 +330,12 @@ class Home extends React.Component {
                 onFeatureHover={this.onMapboxFeatureHover}
                 onFeatureClick={this.onMapboxFeatureClick}
                 highlightFeatureId={this.state.hoverFeatureId}
-                selectedFeatureId={this.state.selectedFeatureId}
+                selectedFeatureId={rooftopId}
               />
             </OverheadViz>
           )}
         </Visualizations>
-        <Passport>
-          <PassportHeader>
-            <PassportTitle>Passport</PassportTitle>
-            <PassportToolbar>
-              <VerticalDivider />
-            </PassportToolbar>
-          </PassportHeader>
-        </Passport>
+        {this.renderPassport()}
       </Page>
     );
   }
@@ -296,19 +344,25 @@ class Home extends React.Component {
 if (environment !== 'production') {
   Home.propTypes = {
     fetchRooftopCentroids: T.func,
-    rooftopCentroids: T.object
+    fetchRooftop: T.func,
+    rooftopCentroids: T.object,
+    rooftop: T.object,
+    match: T.object,
+    history: T.object
   };
 }
 
-function mapStateToProps (state) {
+function mapStateToProps (state, props) {
   return {
-    rooftopCentroids: wrapApiResult(state.rooftops.centroids)
+    rooftopCentroids: wrapApiResult(state.rooftops.centroids),
+    rooftop: wrapApiResult(getFromState(state, ['rooftops', 'individualRooftops', props.match.params.rooftop]))
   };
 }
 
 function dispatcher (dispatch) {
   return {
-    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args))
+    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args)),
+    fetchRooftop: (...args) => dispatch(fetchRooftop(...args))
   };
 }
 

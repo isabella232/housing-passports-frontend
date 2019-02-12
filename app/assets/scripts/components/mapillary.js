@@ -73,7 +73,9 @@ class MapillaryView extends React.PureComponent {
 
     this.mly.on('click', async e => {
       const id = await getMarkerIdAtPoint(e.pixelPoint);
-      if (id !== null && id !== this.props.selectedMarkerId) { this.props.onMarkerClick(id); }
+      if (id !== null && id !== this.props.selectedMarkerId) {
+        this.props.onMarkerClick(id);
+      }
     });
 
     this.setupMarkers(this.props);
@@ -82,7 +84,13 @@ class MapillaryView extends React.PureComponent {
   componentDidUpdate (prevProps) {
     this.setupMarkers(this.props);
 
-    if (this.props.vizView !== prevProps.vizView) {
+    // When the view changes or when a feature is selected / de-selected
+    // resize the map.
+    if (
+      this.props.vizView !== prevProps.vizView ||
+      prevProps.selectedMarkerId === null ||
+      this.props.selectedMarkerId === null
+    ) {
       this.mly.resize();
     }
 
