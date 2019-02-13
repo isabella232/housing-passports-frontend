@@ -8,13 +8,38 @@ import { themeVal } from '../../atomic-components/utils/functions';
 import { divide } from '../../atomic-components/utils/math';
 
 import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
+import CarouselModal from './carousel-modal';
 
 class Passport extends React.Component {
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      galleryRevealed: false
+    };
+
+    this.onModalCloseClick = this.onModalCloseClick.bind(this);
+  }
+
+  onModalCloseClick () {
+    this.setState({ galleryRevealed: false });
+  }
+
   render () {
     if (!this.props.visible) return null;
 
     const { isReady, hasError, getData } = this.props.rooftop;
     const data = getData();
+
+    const images = [
+      'http://loremflickr.com/1440/720/lego',
+      'http://loremflickr.com/1440/720/lego?v1',
+      'http://loremflickr.com/1440/720/lego?v2',
+      'http://loremflickr.com/1440/720/lego?v3',
+      'http://loremflickr.com/1440/720/lego?v4',
+      'http://loremflickr.com/1440/720/lego?v5',
+      'http://loremflickr.com/1440/720/lego?v6'
+    ];
 
     return (
       <article className={this.props.className}>
@@ -42,6 +67,14 @@ class Passport extends React.Component {
           <pre>
             {JSON.stringify(data, null, '  ')}
           </pre>
+        )}
+
+        {!hasError() && isReady() && (
+          <CarouselModal
+            images={images}
+            revealed={this.state.galleryRevealed}
+            onCloseClick={this.onModalCloseClick}
+          />
         )}
       </article>
     );

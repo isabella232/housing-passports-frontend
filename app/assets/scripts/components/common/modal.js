@@ -15,16 +15,21 @@ const sizeMapping = {
   'small': '32rem',
   'medium': '48rem',
   'large': '64rem',
-  'xlarge': '80rem'
+  'xlarge': '80rem',
+  'full': '100%'
 };
 
 const ModalInner = styled.div`
   padding-left: 1rem;
   padding-right: 1rem;
   position: relative;
-  margin: ${multiply(themeVal('layout.globalSpacing'), 2)} 0;
+  /* margin: ${multiply(themeVal('layout.globalSpacing'), 2)} 0; */
+  margin: 0;
   width: 100%;
   max-width: 48rem;
+
+  /* display: flex;
+  flex-flow: column; */
 
   > *:last-child {
     margin-bottom: 0;
@@ -43,8 +48,9 @@ const ModalWrapper = styled.section`
   z-index: 9990;
   overflow-y: auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
+
+  /* justify-content: center; */
+  /* align-items: center; */
   background: #fff;
 
   &.modal-enter {
@@ -73,13 +79,13 @@ const ModalWrapper = styled.section`
 
 const ButtonDismiss = styled(Button)`
   position: absolute;
-  top: ${multiply(themeVal('layout.globalSpacing'), 2)};
+  top: ${multiply(themeVal('layout.globalSpacing'), 1.5)};
   right: ${multiply(themeVal('layout.globalSpacing'), 2)};
   z-index: 10;
 
   ::before {
     ${collecticons('xmark')}
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
 `;
 
@@ -251,11 +257,24 @@ if (process.env.NODE_ENV !== 'production') {
 
 export const ModalHeader = styled.header`
   position: relative;
-  text-align: center;
-  margin-bottom: ${multiply(themeVal('layout.globalSpacing'), 3)};
+  margin: 0 -${themeVal('layout.globalSpacing')} ${themeVal('layout.globalSpacing')} -${themeVal('layout.globalSpacing')};
+  padding: ${themeVal('layout.globalSpacing')};
+
+  /* text-align: center; */
+  /* margin-bottom: ${multiply(themeVal('layout.globalSpacing'), 3)}; */
 
   & > *:last-child {
     margin-bottom: 0;
+  }
+
+  &::after {
+    content: '';
+    width: 100%;
+    height: ${themeVal('shape.borderWidth')};
+    background: ${themeVal('colors.baseAlphaColor')};
+    position: absolute;
+    left: 0;
+    bottom: 0;
   }
 `;
 
