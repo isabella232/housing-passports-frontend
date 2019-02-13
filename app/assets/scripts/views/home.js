@@ -19,10 +19,10 @@ import Passport from '../components/home/passport';
 const Page = styled.section`
   display: grid;
   min-height: 100vh;
-
-  /* grid: [row1-start] "major minor" 4rem [row1-end] [row2-start] "major minor" auto [row2-end] / auto 20rem; */
-  grid-auto-columns: 1fr 20rem;
-  grid-auto-rows: auto 1fr;
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-auto-columns: 20rem;
 `;
 
 const PageHeader = styled.header`
