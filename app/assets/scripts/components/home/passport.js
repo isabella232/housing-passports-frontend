@@ -9,6 +9,36 @@ import { divide } from '../../atomic-components/utils/math';
 
 import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
 import CarouselModal from './carousel-modal';
+import Heading from '../../atomic-components/heading';
+import Dl from '../../atomic-components/definition-list';
+
+const PassportSection = styled.section`
+  padding: ${themeVal('layout.globalSpacing')};
+
+  &:not(:last-child) {
+    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const SectionHeading = styled(Heading)`
+  margin: 0 0 1.5rem 0;
+`;
+
+const SectionDl = styled(Dl)`
+  dt,
+  dd {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  dd {
+    font-weight: ${themeVal('typography.baseFontBold')};
+  }
+`;
 
 class Passport extends React.Component {
   constructor (props) {
@@ -25,11 +55,40 @@ class Passport extends React.Component {
     this.setState({ galleryRevealed: false });
   }
 
+  renderData () {
+    const data = this.props.rooftop.getData();
+
+    return (
+      <div>
+        <PassportSection>
+          <SectionHeading variation='secondary' size='small'>Location</SectionHeading>
+          <SectionDl type='horizontal'>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+          </SectionDl>
+        </PassportSection>
+        <PassportSection>
+          <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
+          <SectionDl type='horizontal'>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+          </SectionDl>
+        </PassportSection>
+        <pre>
+          {JSON.stringify(data, null, '  ')}
+        </pre>
+      </div>
+    );
+  }
+
   render () {
     if (!this.props.visible) return null;
 
-    const { isReady, hasError, getData } = this.props.rooftop;
-    const data = getData();
+    const { isReady, hasError } = this.props.rooftop;
 
     const images = [
       'http://loremflickr.com/1440/720/lego',
@@ -63,11 +122,7 @@ class Passport extends React.Component {
           <p>Passport not found</p>
         )}
 
-        {!hasError() && isReady() && (
-          <pre>
-            {JSON.stringify(data, null, '  ')}
-          </pre>
-        )}
+        {!hasError() && isReady() && this.renderData()}
 
         {!hasError() && isReady() && (
           <CarouselModal
