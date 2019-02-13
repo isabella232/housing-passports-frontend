@@ -3,7 +3,7 @@ import { rgba, tint } from 'polished';
 let colors = {
   baseColor: '#000000',
   primaryColor: '#D9166F',
-  secondaryColor: '#ffc700',
+  secondaryColor: '#429769',
   dangerColor: '#d85d3f',
   successColor: '#216869',
   warningColor: '#ffc700',
