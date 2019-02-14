@@ -32,6 +32,7 @@ const ModalBodyCarousel = styled(ModalBody)`
 const CarouselStylesOverrides = createGlobalStyle`
   .carousel.carousel-slider {
     flex-grow: 1;
+    height: 100%;
   }
 
   .carousel {
@@ -46,6 +47,8 @@ const CarouselStylesOverrides = createGlobalStyle`
   .carousel .slide img {
     height: 100%;
     width: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   .carousel .slide {
@@ -69,10 +72,10 @@ class CarouselModal extends React.Component {
   }
 
   render () {
-    const { images, revealed, onCloseClick } = this.props;
+    const { id, images, revealed, onCloseClick } = this.props;
     return (
       <Modal
-        id='modal'
+        id={id}
         size='full'
         revealed={revealed}
         onCloseClick={onCloseClick}
@@ -103,6 +106,7 @@ class CarouselModal extends React.Component {
 
 if (environment !== 'production') {
   CarouselModal.propTypes = {
+    id: T.string,
     images: T.array,
     revealed: T.bool,
     onCloseClick: T.func

@@ -7,6 +7,7 @@ import collecticon from '../atomic-components/collecticons';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
+import Dropdown from '../components/common/dropdown';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -14,6 +15,7 @@ const Title = styled.h1`
   color: palevioletred;
 
   ::before {
+    ${collecticon('plus')};
     margin-right: 1rem;
   }
 
@@ -82,6 +84,48 @@ export default class Playground extends React.Component {
           <Title>Housing Passports - Playground</Title>
         </header>
         <Main>
+          <Dropdown
+            triggerElement={
+              <Button variation={'base-raised-light'}>Hello</Button>
+            }
+            direction='down'
+            alignment='center'
+          >
+            <h6 className='drop__title'>Browse</h6>
+            <ul className='drop__menu drop__menu--select'>
+              <li>helooooo</li>
+              <li>
+                <button type='button' data-hook='dropdown:close'>
+                  close
+                </button>
+              </li>
+            </ul>
+          </Dropdown>
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <div style={{ marginLeft: '5rem' }}>
+            <Dropdown
+              triggerElement={
+                <Button variation={'base-raised-light'}>another</Button>
+              }
+              direction='left'
+              alignment='middle'
+            >
+              <h6 className='drop__title'>Browse</h6>
+              <ul className='drop__menu drop__menu--select'>
+                <li>helooooo</li>
+                <li>
+                  <button type='button' data-hook='dropdown:close'>
+                    close
+                  </button>
+                </li>
+              </ul>
+            </Dropdown>
+          </div>
           <div>
             <h1>Button Group</h1>
             <ButtonGroup orientation='horizontal'>
@@ -90,9 +134,15 @@ export default class Playground extends React.Component {
               <Button variation='base-raised-light'>Third</Button>
             </ButtonGroup>
             <ButtonGroup orientation='horizontal'>
-              <ButtonIconBrand variation='base-raised-light'>First</ButtonIconBrand>
-              <ButtonIconBrand variation='base-raised-light'>Second</ButtonIconBrand>
-              <ButtonIconBrand variation='base-raised-light'>Third</ButtonIconBrand>
+              <ButtonIconBrand variation='base-raised-light'>
+                First
+              </ButtonIconBrand>
+              <ButtonIconBrand variation='base-raised-light'>
+                Second
+              </ButtonIconBrand>
+              <ButtonIconBrand variation='base-raised-light'>
+                Third
+              </ButtonIconBrand>
             </ButtonGroup>
             <ButtonGroup orientation='vertical'>
               <Button variation='base-raised-light'>First</Button>

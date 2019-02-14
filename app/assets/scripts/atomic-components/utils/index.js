@@ -8,7 +8,7 @@ export const antialiased = () => css`
 // Hide only visually, but have it available for screenreaders
 export const visuallyHidden = () => css`
   border: 0 none;
-  clip: rect(0px, 0px, 0px, 0px);
+  clip: rect(0, 0, 0, 0);
   height: 1px;
   margin: -1px;
   overflow: hidden;

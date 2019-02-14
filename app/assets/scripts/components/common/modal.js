@@ -23,13 +23,9 @@ const ModalInner = styled.div`
   padding-left: 1rem;
   padding-right: 1rem;
   position: relative;
-  /* margin: ${multiply(themeVal('layout.globalSpacing'), 2)} 0; */
   margin: 0;
   width: 100%;
   max-width: 48rem;
-
-  /* display: flex;
-  flex-flow: column; */
 
   > *:last-child {
     margin-bottom: 0;
@@ -48,30 +44,31 @@ const ModalWrapper = styled.section`
   z-index: 9990;
   overflow-y: auto;
   display: flex;
-
-  /* justify-content: center; */
-  /* align-items: center; */
+  opacity: 1;
+  visibility: visible;
   background: #fff;
+  transform: translate3d(0, 0, 0);
 
+  &.modal-appear,
   &.modal-enter {
-    transform: translate3d(0, 0, 0);
-    transition: opacity 0.32s ease 0s, visibility 0.32s linear 0s;
     opacity: 0;
     visibility: hidden;
   }
 
-  &.modal-enter.modal-enter-active {
+  &.modal-enter-appear,
+  &.modal-enter-active {
+    transition: opacity 0.32s ease 0s, visibility 0.32s linear 0s;
     opacity: 1;
     visibility: visible;
   }
 
   &.modal-exit {
-    transition: opacity 0.32s ease 0s, visibility 0.32s linear 0s;
     opacity: 1;
     visibility: visible;
   }
 
-  &.modal-exit.modal-exit-active {
+  &.modal-exit-active {
+    transition: opacity 0.32s ease 0s, visibility 0.32s linear 0s;
     opacity: 0;
     visibility: hidden;
   }
@@ -205,7 +202,7 @@ export class Modal extends React.Component {
         appear={true}
         unmountOnExit={true}
         classNames='modal'
-        timeout={{ enter: 300, exit: 300 }}>
+        timeout={{ enter: 400, exit: 400 }}>
 
         <ModalWrapper className={klasses.join(' ')} key={`modal-${this.props.id}`} onClick={this.onOverlayClick} id={this.props.id}>
           <BodyUnscrollable revealed={this.props.revealed} />
@@ -259,9 +256,6 @@ export const ModalHeader = styled.header`
   position: relative;
   margin: 0 -${themeVal('layout.globalSpacing')} ${themeVal('layout.globalSpacing')} -${themeVal('layout.globalSpacing')};
   padding: ${themeVal('layout.globalSpacing')};
-
-  /* text-align: center; */
-  /* margin-bottom: ${multiply(themeVal('layout.globalSpacing'), 3)}; */
 
   & > *:last-child {
     margin-bottom: 0;
