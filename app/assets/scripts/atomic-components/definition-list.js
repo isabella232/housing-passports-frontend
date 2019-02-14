@@ -28,12 +28,12 @@ const Dl = styled.dl`
     ${clearFix()}
 
     dd {
-      width: 68%;
+      width: 64%;
       padding-left: ${divide(themeVal('layout.globalSpacing'), 2)};
     }
 
     dd + dd {
-      margin-left: 32%;
+      margin-left: 36%;
     }
 
     dt, dd {
@@ -41,7 +41,7 @@ const Dl = styled.dl`
     }
 
     dt {
-      width: 32%;
+      width: 36%;
       clear: left;
       padding-top: ${divide(themeVal('layout.globalSpacing'), 8)};
       padding-bottom: ${divide(themeVal('layout.globalSpacing'), 8)};

@@ -69,10 +69,10 @@ class CarouselModal extends React.Component {
   }
 
   render () {
-    const { images, revealed, onCloseClick } = this.props;
+    const { id, images, revealed, onCloseClick } = this.props;
     return (
       <Modal
-        id='modal'
+        id={id}
         size='full'
         revealed={revealed}
         onCloseClick={onCloseClick}
@@ -103,6 +103,7 @@ class CarouselModal extends React.Component {
 
 if (environment !== 'production') {
   CarouselModal.propTypes = {
+    id: T.string,
     images: T.array,
     revealed: T.bool,
     onCloseClick: T.func

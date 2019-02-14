@@ -18,7 +18,7 @@ import Passport from '../components/home/passport';
 
 const Page = styled.section`
   display: grid;
-  min-height: 100vh;
+  height: 100vh;
   grid-template-rows: auto;
   grid-auto-rows: 1fr;
   grid-template-columns: 1fr;

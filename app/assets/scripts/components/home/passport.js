@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { PropTypes as T } from 'prop-types';
+import { rgba } from 'polished';
 
 import { environment } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
@@ -12,34 +13,6 @@ import CarouselModal from './carousel-modal';
 import Heading from '../../atomic-components/heading';
 import Dl from '../../atomic-components/definition-list';
 
-const PassportSection = styled.section`
-  padding: ${themeVal('layout.globalSpacing')};
-
-  &:not(:last-child) {
-    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
-  }
-
-  > *:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const SectionHeading = styled(Heading)`
-  margin: 0 0 1.5rem 0;
-`;
-
-const SectionDl = styled(Dl)`
-  dt,
-  dd {
-    font-size: 0.75rem;
-    line-height: 1rem;
-  }
-
-  dd {
-    font-weight: ${themeVal('typography.baseFontBold')};
-  }
-`;
-
 class Passport extends React.Component {
   constructor (props) {
     super(props);
@@ -49,46 +22,20 @@ class Passport extends React.Component {
     };
 
     this.onModalCloseClick = this.onModalCloseClick.bind(this);
+    this.onGalleryImageClick = this.onGalleryImageClick.bind(this);
   }
 
   onModalCloseClick () {
     this.setState({ galleryRevealed: false });
   }
 
-  renderData () {
-    const data = this.props.rooftop.getData();
-
-    return (
-      <div>
-        <PassportSection>
-          <SectionHeading variation='secondary' size='small'>Location</SectionHeading>
-          <SectionDl type='horizontal'>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-          </SectionDl>
-        </PassportSection>
-        <PassportSection>
-          <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
-          <SectionDl type='horizontal'>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-          </SectionDl>
-        </PassportSection>
-        <pre>
-          {JSON.stringify(data, null, '  ')}
-        </pre>
-      </div>
-    );
+  onGalleryImageClick (e) {
+    e.preventDefault();
+    this.setState({ galleryRevealed: true });
   }
 
-  render () {
-    if (!this.props.visible) return null;
-
-    const { isReady, hasError } = this.props.rooftop;
+  renderData () {
+    const data = this.props.rooftop.getData();
 
     const images = [
       'http://loremflickr.com/1440/720/lego',
@@ -101,9 +48,55 @@ class Passport extends React.Component {
     ];
 
     return (
+      <PassportBody>
+        <Section>
+          <SectionHeading variation='secondary' size='small'>Location</SectionHeading>
+          {images.length && (
+            <SectionFigureLink href={`#passport-gallery-${data.id}`} title='Open photo gallery' onClick={this.onGalleryImageClick}>
+              <SectionFigure>
+                <img src={images[0]} alt='Passport gallery image cover' />
+                <SectionFigcaption>{images.length} photos</SectionFigcaption>
+              </SectionFigure>
+            </SectionFigureLink>
+          )}
+          <SectionDl type='horizontal'>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+            <dt>Term</dt>
+            <dd>Definition</dd>
+          </SectionDl>
+        </Section>
+        <Section>
+          <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
+          <SectionDl type='horizontal'>
+            {Object.keys(data).map(k => (
+              <React.Fragment>
+                <dt>{k.replace('_', ' ')}</dt>
+                <dd>{data[k].toString()}</dd>
+              </React.Fragment>
+            ))}
+          </SectionDl>
+        </Section>
+
+        <CarouselModal
+          id={`passport-gallery-${data.id}`}
+          images={images}
+          revealed={this.state.galleryRevealed}
+          onCloseClick={this.onModalCloseClick}
+        />
+      </PassportBody>
+    );
+  }
+
+  render () {
+    if (!this.props.visible) return null;
+
+    const { isReady, hasError } = this.props.rooftop;
+
+    return (
       <article className={this.props.className}>
         <PassportHeader>
-          <PassportTitle onClick={() => this.setState({ galleryRevealed: true })}>Passport</PassportTitle>
+          <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
             <VerticalDivider />
           </PassportToolbar>
@@ -123,14 +116,6 @@ class Passport extends React.Component {
         )}
 
         {!hasError() && isReady() && this.renderData()}
-
-        {!hasError() && isReady() && (
-          <CarouselModal
-            images={images}
-            revealed={this.state.galleryRevealed}
-            onCloseClick={this.onModalCloseClick}
-          />
-        )}
       </article>
     );
   }
@@ -148,6 +133,8 @@ export default styled(Passport)`
   grid-column: 2;
   grid-row: 1 / span 2;
   position: relative;
+  display: flex;
+  flex-flow: column;
   z-index: 20;
   background: #fff;
   box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
@@ -180,10 +167,74 @@ const PassportTitle = styled.h1`
 const PassportToolbar = styled.div`
 `;
 
+const PassportBody = styled.div`
+  flex-grow: 1;
+  overflow-y: scroll;
+`;
+
 const VerticalDivider = styled.hr`
   border: 0;
   width: ${divide(themeVal('layout.globalSpacing'), 2)};
   height: ${themeVal('layout.globalSpacing')};
   margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
   background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
+`;
+
+const Section = styled.section`
+  padding: ${themeVal('layout.globalSpacing')};
+  display: flex;
+  flex-flow: column;
+
+  &:not(:last-child) {
+    box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const SectionHeading = styled(Heading)`
+  margin: 0 0 1.5rem 0;
+`;
+
+const SectionDl = styled(Dl)`
+  margin: 0;
+
+  dt,
+  dd {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  dd {
+    font-weight: ${themeVal('typography.baseFontBold')};
+  }
+`;
+
+const SectionFigureLink = styled.a`
+  order: -1;
+`;
+
+const SectionFigure = styled.figure`
+  position: relative;
+  margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
+  border-radius: ${themeVal('shape.rounded')};
+  overflow: hidden;
+  box-shadow: 0 0 0 1px ${({ theme }) => rgba(theme.colors.baseColor, 0.16)};
+
+  > img {
+    width: 100%;
+    display: block;
+  }
+`;
+
+const SectionFigcaption = styled.figcaption`
+  position: absolute;
+  bottom: ${themeVal('layout.globalSpacing')};
+  right: ${themeVal('layout.globalSpacing')};
+  z-index: 10;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 8px ${({ theme }) => rgba(theme.colors.baseColor, 0.64)};
 `;
