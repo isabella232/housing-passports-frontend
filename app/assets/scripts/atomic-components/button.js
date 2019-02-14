@@ -252,8 +252,8 @@ function buttonVariation (color, style, brightness, { theme }) {
     }
 
     ${({ active }) => (active ? '&, &:hover,' : '')}
+    /* stylelint-disable-line */
     &:active {
-      /* stylelint-disable-line */
       background-color: ${bgColorActive};
       ${shadowColor &&
         css`
