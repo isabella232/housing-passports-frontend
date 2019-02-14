@@ -24,7 +24,7 @@ const Dl = styled.dl`
     margin-bottom: 0;
   }
 
-  ${({ type }) => type === 'horizontal' && css`
+  ${/* sc-declaration */({ type }) => type === 'horizontal' && css`
     ${clearFix()}
 
     dd {
@@ -47,7 +47,7 @@ const Dl = styled.dl`
       padding-bottom: ${divide(themeVal('layout.globalSpacing'), 8)};
       padding-right: ${divide(themeVal('layout.globalSpacing'), 2)};
     }
-  `};
+  `}
 `;
 
 export default Dl;

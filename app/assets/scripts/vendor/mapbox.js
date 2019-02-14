@@ -3,5 +3,8 @@ import { css } from 'styled-components';
 // This file includes the mapbox styles with needed overrides to be used
 // by styled components.
 
-// stylelint-disable
-export default () => css``;
+export default () => css`
+  /* Overrides for mapbox styles.
+   Move the needed parts from assets/styles/vendor to this file
+   and take full advantage of styled-components. */
+`;
