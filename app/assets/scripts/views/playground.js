@@ -77,6 +77,12 @@ const lightVariations = ['achromic-plain', 'achromic-glass'];
 const sizes = ['small', 'default', 'large', 'xlarge'];
 
 export default class Playground extends React.Component {
+  constructor (props) {
+    super(props);
+    // eslint-disable-next-line react/prop-types
+    if (process.env.NODE_ENV !== 'development') props.history.replace('/');
+  }
+
   render () {
     return (
       <div>
