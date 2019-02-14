@@ -1,17 +1,19 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { PropTypes as T } from 'prop-types';
 import { rgba } from 'polished';
 
 import { environment } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
-import { divide } from '../../atomic-components/utils/math';
 
 import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
 import CarouselModal from './carousel-modal';
 import Heading from '../../atomic-components/heading';
 import Dl from '../../atomic-components/definition-list';
+import Button from '../../atomic-components/button';
+import collecticons from '../../atomic-components/collecticons';
 
 class Passport extends React.Component {
   constructor (props) {
@@ -98,12 +100,13 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
-            <VerticalDivider />
+            <PassportClose element={Link} to='/' variation='base-plain' hideText>Close passport</PassportClose>
+            {/* <VerticalDivider /> */}
           </PassportToolbar>
         </PassportHeader>
 
         {!isReady() && (
-          <LoadingSkeletonGroup>
+          <LoadingSkeletonGroup style={{ padding: '1rem' }}>
             <LoadingSkeleton type='heading' width={1 / 5}/>
             <LoadingSkeleton width={2 / 3} />
             <LoadingSkeleton width={2 / 3} />
@@ -165,7 +168,13 @@ const PassportTitle = styled.h1`
 `;
 
 const PassportToolbar = styled.div`
-  /* Toolbar styles */
+  margin-left: auto;
+`;
+
+const PassportClose = styled(Button)`
+  ::before {
+    ${collecticons('xmark')}
+  }
 `;
 
 const PassportBody = styled.div`
@@ -173,13 +182,13 @@ const PassportBody = styled.div`
   overflow-y: scroll;
 `;
 
-const VerticalDivider = styled.hr`
-  border: 0;
-  width: ${divide(themeVal('layout.globalSpacing'), 2)};
-  height: ${themeVal('layout.globalSpacing')};
-  margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
-  background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
-`;
+// const VerticalDivider = styled.hr`
+//   border: 0;
+//   width: ${divide(themeVal('layout.globalSpacing'), 2)};
+//   height: ${themeVal('layout.globalSpacing')};
+//   margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
+//   background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
+// `;
 
 const Section = styled.section`
   padding: ${themeVal('layout.globalSpacing')};
