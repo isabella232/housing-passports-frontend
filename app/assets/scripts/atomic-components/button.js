@@ -13,15 +13,17 @@ const BaseButton = ({
   hideText,
   size,
   variation,
+  element: El,
   ...rest
 }) => (
-  <button {...rest}>
+  <El {...rest}>
     <span>{children}</span>
-  </button>
+  </El>
 );
 
 if (environment !== 'production') {
   BaseButton.propTypes = {
+    element: T.oneOfType([T.elementType, T.string]).isRequired,
     children: T.node,
     active: T.bool,
     hideText: T.bool,
@@ -31,6 +33,7 @@ if (environment !== 'production') {
 }
 
 BaseButton.defaultProps = {
+  element: 'button',
   type: 'button',
   size: 'medium'
 };
