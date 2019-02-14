@@ -6,10 +6,10 @@ const $ = require('gulp-load-plugins')();
 const del = require('del');
 const browserSync = require('browser-sync');
 const browserify = require('browserify');
+const errorify = require('errorify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const log = require('fancy-log');
-const notifier = require('node-notifier');
 const historyApiFallback = require('connect-history-api-fallback');
 const through2 = require('through2');
 
@@ -115,28 +115,24 @@ module.exports.default = gulp.series(
 function javascript () {
   // Ensure package is updated.
   const pkg = readPackage();
-  return browserify({
+  const b = browserify({
     entries: ['./app/assets/scripts/main.js'],
     debug: true,
     cache: {},
     packageCache: {},
     bundleExternal: false,
     fullPaths: true
-  })
-    .external(pkg.dependencies ? Object.keys(pkg.dependencies) : [])
-    .bundle()
-    .on('error', function (e) {
-      notifier.notify({
-        title: 'Oops! Browserify errored:',
-        message: e.message
-      });
-      console.log('Javascript error:', e); // eslint-disable-line
-      if (isProd()) {
-        throw new Error(e);
-      }
-      // Allows the watch to continue.
-      this.emit('end');
-    })
+  }).external(pkg.dependencies ? Object.keys(pkg.dependencies) : []);
+
+  if (!isProd()) {
+    b.plugin(errorify);
+  } else {
+    b.on('error', function (e) {
+      throw new Error(e);
+    });
+  }
+
+  return b.bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe($.sourcemaps.init({ loadMaps: true }))
@@ -199,6 +195,7 @@ function html () {
     // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-286277540
     // https://github.com/mishoo/UglifyJS2/issues/1609 -> Just until gulp-uglify updates
     .pipe($.if('*.js', $.uglify({ compress: { comparisons: false, collapse_vars: false } })))
+    .pipe($.if('*.css', $.csso()))
     .pipe($.if(/\.(css|js)$/, $.rev()))
     .pipe($.revRewrite())
     .pipe(gulp.dest('dist'));

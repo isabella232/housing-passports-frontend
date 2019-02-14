@@ -7,28 +7,35 @@ import { connect } from 'react-redux';
 import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
 import collecticon from '../atomic-components/collecticons';
-import { wrapApiResult } from '../utils/utils';
+import { wrapApiResult, getFromState } from '../utils/utils';
 
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
-import MapillaryView from '../components/mapillary';
-import MapboxView from '../components/mapbox';
-import { fetchRooftopCentroids } from '../redux/rooftops';
+import MapillaryView from '../components/home/mapillary';
+import MapboxView from '../components/home/mapbox';
+import { fetchRooftopCentroids, fetchRooftop } from '../redux/rooftops';
+import Passport from '../components/home/passport';
 
 const Page = styled.section`
   display: grid;
   min-height: 100vh;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-auto-columns: 20rem;
 `;
 
 const PageHeader = styled.header`
+  grid-column: 1;
   position: relative;
   z-index: 10;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  background: #fff;
   padding: ${themeVal('layout.globalSpacing')};
-  box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
+  min-height: 4rem;
 
   > *:last-child {
     margin-left: auto;
@@ -75,9 +82,9 @@ const ButtonOverheadViz = styled(Button)`
   }
 `;
 
-const Visualizations = styled.div`
+const Visualizations = styled.main`
+  grid-column: 1;
   display: grid;
-  height: 100%;
 
   /* stylelint-disable-next-line */
   > * {
@@ -113,12 +120,28 @@ class Home extends React.Component {
     this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
     this.onMapillaryBearingChange = this.onMapillaryBearingChange.bind(this);
     this.onMapillaryMarkerHover = this.onMapillaryMarkerHover.bind(this);
+    this.onMapillaryMarkerClick = this.onMapillaryMarkerClick.bind(this);
 
     this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
+    this.onMapboxFeatureClick = this.onMapboxFeatureClick.bind(this);
   }
 
   componentDidMount () {
     this.props.fetchRooftopCentroids();
+
+    const currId = this.props.match.params.rooftop;
+    if (currId) {
+      this.props.fetchRooftop(currId);
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    const currId = this.props.match.params.rooftop;
+    const prevId = prevProps.match.params.rooftop;
+
+    if (currId !== prevId) {
+      this.props.fetchRooftop(currId);
+    }
   }
 
   onMapillaryCoordsChange (lnglat) {
@@ -137,11 +160,22 @@ class Home extends React.Component {
     this.setState({ hoverFeatureId: id });
   }
 
+  onMapillaryMarkerClick (id) {
+    this.props.history.push(`/passport/${id}`);
+  }
+
+  onMapboxFeatureClick (id) {
+    this.props.history.push(`/passport/${id}`);
+  }
+
   onVizViewClick (type) {
     this.setState({ vizView: type });
   }
 
   render () {
+    const rooftopParam = this.props.match.params.rooftop;
+    const rooftopId = rooftopParam ? parseInt(rooftopParam) : null;
+
     return (
       <Page>
         <PageHeader>
@@ -178,34 +212,41 @@ class Home extends React.Component {
             </ButtonOverheadViz>
           </ButtonGroup>
         </PageHeader>
-        <main>
-          <Visualizations>
-            {this.state.vizView !== 'overhead' && (
-              <StreetViz>
-                <MapillaryView
-                  vizView={this.state.vizView}
-                  rooftopCentroids={this.props.rooftopCentroids.getData(null)}
-                  onCoordinatesChange={this.onMapillaryCoordsChange}
-                  onBearingChange={this.onMapillaryBearingChange}
-                  onMarkerHover={this.onMapillaryMarkerHover}
-                  highlightMarkerId={this.state.hoverFeatureId}
-                />
-              </StreetViz>
-            )}
+        <Visualizations>
+          {this.state.vizView !== 'overhead' && (
+            <StreetViz>
+              <MapillaryView
+                vizView={this.state.vizView}
+                rooftopCentroids={this.props.rooftopCentroids.getData(null)}
+                onCoordinatesChange={this.onMapillaryCoordsChange}
+                onBearingChange={this.onMapillaryBearingChange}
+                onMarkerHover={this.onMapillaryMarkerHover}
+                onMarkerClick={this.onMapillaryMarkerClick}
+                highlightMarkerId={this.state.hoverFeatureId}
+                selectedMarkerId={rooftopId}
+              />
+            </StreetViz>
+          )}
 
-            {this.state.vizView !== 'street' && (
-              <OverheadViz>
-                <MapboxView
-                  vizView={this.state.vizView}
-                  markerPos={this.state.mapillaryPos}
-                  markerBearing={this.state.mapillaryBearing}
-                  onFeatureHover={this.onMapboxFeatureHover}
-                  highlightFeatureId={this.state.hoverFeatureId}
-                />
-              </OverheadViz>
-            )}
-          </Visualizations>
-        </main>
+          {this.state.vizView !== 'street' && (
+            <OverheadViz>
+              <MapboxView
+                vizView={this.state.vizView}
+                markerPos={this.state.mapillaryPos}
+                markerBearing={this.state.mapillaryBearing}
+                onFeatureHover={this.onMapboxFeatureHover}
+                onFeatureClick={this.onMapboxFeatureClick}
+                highlightFeatureId={this.state.hoverFeatureId}
+                selectedFeatureId={rooftopId}
+              />
+            </OverheadViz>
+          )}
+        </Visualizations>
+
+        <Passport
+          visible={!!this.props.match.params.rooftop}
+          rooftop={this.props.rooftop}
+        />
       </Page>
     );
   }
@@ -214,19 +255,25 @@ class Home extends React.Component {
 if (environment !== 'production') {
   Home.propTypes = {
     fetchRooftopCentroids: T.func,
-    rooftopCentroids: T.object
+    fetchRooftop: T.func,
+    rooftopCentroids: T.object,
+    rooftop: T.object,
+    match: T.object,
+    history: T.object
   };
 }
 
-function mapStateToProps (state) {
+function mapStateToProps (state, props) {
   return {
-    rooftopCentroids: wrapApiResult(state.rooftops.centroids)
+    rooftopCentroids: wrapApiResult(state.rooftops.centroids),
+    rooftop: wrapApiResult(getFromState(state, ['rooftops', 'individualRooftops', props.match.params.rooftop]))
   };
 }
 
 function dispatcher (dispatch) {
   return {
-    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args))
+    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args)),
+    fetchRooftop: (...args) => dispatch(fetchRooftop(...args))
   };
 }
 

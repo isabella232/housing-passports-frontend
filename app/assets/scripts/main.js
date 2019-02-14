@@ -26,6 +26,7 @@ const Root = () => (
           <GlobalStyles />
           <Switch>
             <Route exact path='/' component={Home} />
+            <Route exact path='/passport/:rooftop' component={Home} />
             <Route exact path='/playground' component={Playground} />
             <Route path='*' component={UhOh} />
           </Switch>
