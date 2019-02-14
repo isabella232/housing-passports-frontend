@@ -139,7 +139,7 @@ class Home extends React.Component {
     const currId = this.props.match.params.rooftop;
     const prevId = prevProps.match.params.rooftop;
 
-    if (currId !== prevId) {
+    if (currId && currId !== prevId) {
       this.props.fetchRooftop(currId);
     }
   }

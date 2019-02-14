@@ -13,15 +13,22 @@ const BaseButton = ({
   hideText,
   size,
   variation,
+  type,
+  element: El,
   ...rest
-}) => (
-  <button {...rest}>
-    <span>{children}</span>
-  </button>
-);
+}) => {
+  type = El === 'button' ? type || 'button' : '';
+  return (
+    <El {...rest} type={type}>
+      <span>{children}</span>
+    </El>
+  );
+};
 
 if (environment !== 'production') {
   BaseButton.propTypes = {
+    element: T.oneOfType([T.elementType, T.string]).isRequired,
+    type: T.string,
     children: T.node,
     active: T.bool,
     hideText: T.bool,
@@ -31,6 +38,7 @@ if (environment !== 'production') {
 }
 
 BaseButton.defaultProps = {
+  element: 'button',
   type: 'button',
   size: 'medium'
 };
@@ -124,25 +132,27 @@ const Button = styled(BaseButton)`
   transition: background-color 0.24s ease 0s;
 
   /* Variations */
-  ${(props) => renderButtonVariation(props)}
+  ${props => renderButtonVariation(props)}
 
   /* Size */
-  ${(props) => renderButtonSize(props)}
+  ${props => renderButtonSize(props)}
 
   /* Hide Text */
-  ${({ hideText }) => hideText && css`
-    padding-left: 0;
-    padding-right: 0;
+  ${({ hideText }) =>
+    hideText &&
+    css`
+      padding-left: 0;
+      padding-right: 0;
 
-    &::before,
-    &::after {
-      margin: 0;
-    }
+      &::before,
+      &::after {
+        margin: 0;
+      }
 
-    > * {
-      ${visuallyHidden()}
-    }
-  `}
+      > * {
+        ${visuallyHidden()}
+      }
+    `}
 `;
 
 if (environment !== 'production') {
@@ -190,7 +200,7 @@ function buttonVariation (color, style, brightness, { theme }) {
           textColor = color;
           bgColor = tint(0.88, color);
           bgColorHover = tint(0.84, color);
-          bgColorActive = tint(0.80, color);
+          bgColorActive = tint(0.8, color);
           shadowColor = rgba(theme.colors.baseColor, 0.16);
           break;
         case 'dark':
@@ -232,7 +242,8 @@ function buttonVariation (color, style, brightness, { theme }) {
 
     ${shadowColor &&
       css`
-        box-shadow: 0 -1px 1px 0 ${rgba(theme.colors.baseColor, 0.08)}, 0 2px 6px 0 ${shadowColor};
+        box-shadow: 0 -1px 1px 0 ${rgba(theme.colors.baseColor, 0.08)},
+          0 2px 6px 0 ${shadowColor};
       `}
 
     /* &.button--hover, */
@@ -241,7 +252,8 @@ function buttonVariation (color, style, brightness, { theme }) {
     }
 
     ${({ active }) => (active ? '&, &:hover,' : '')}
-    &:active { /* stylelint-disable-line */
+    /* stylelint-disable-line */
+    &:active {
       background-color: ${bgColorActive};
       ${shadowColor &&
         css`
