@@ -70,7 +70,7 @@ class Passport extends React.Component {
           <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
           <SectionDl type='horizontal'>
             {Object.keys(data).map(k => (
-              <React.Fragment>
+              <React.Fragment key={k}>
                 <dt>{k.replace('_', ' ')}</dt>
                 <dd>{data[k].toString()}</dd>
               </React.Fragment>
@@ -165,6 +165,7 @@ const PassportTitle = styled.h1`
 `;
 
 const PassportToolbar = styled.div`
+  /* Toolbar styles */
 `;
 
 const PassportBody = styled.div`
