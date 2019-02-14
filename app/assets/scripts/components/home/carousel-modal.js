@@ -32,6 +32,7 @@ const ModalBodyCarousel = styled(ModalBody)`
 const CarouselStylesOverrides = createGlobalStyle`
   .carousel.carousel-slider {
     flex-grow: 1;
+    height: 100%;
   }
 
   .carousel {
@@ -46,6 +47,8 @@ const CarouselStylesOverrides = createGlobalStyle`
   .carousel .slide img {
     height: 100%;
     width: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   .carousel .slide {
