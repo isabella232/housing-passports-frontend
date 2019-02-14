@@ -1,6 +1,6 @@
 {
   "name": "housing-passports-frontend",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "description": "The Housing Passports project is a collaboration with the World Bank to improve housing resilience.",
   "repository": {
     "type": "git",
