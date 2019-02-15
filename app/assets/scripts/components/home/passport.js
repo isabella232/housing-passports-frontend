@@ -40,13 +40,8 @@ class Passport extends React.Component {
     const data = this.props.rooftop.getData();
 
     const images = [
-      'http://loremflickr.com/1440/720/lego',
-      'http://loremflickr.com/1440/720/lego?v1',
-      'http://loremflickr.com/1440/720/lego?v2',
-      'http://loremflickr.com/1440/720/lego?v3',
-      'http://loremflickr.com/1440/720/lego?v4',
-      'http://loremflickr.com/1440/720/lego?v5',
-      'http://loremflickr.com/1440/720/lego?v6'
+      'https://c1.staticflickr.com/4/3398/3201376678_f48c0d5e0f_b.jpg',
+      'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg'
     ];
 
     return (
