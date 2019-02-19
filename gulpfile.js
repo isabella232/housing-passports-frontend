@@ -2,18 +2,20 @@
 
 const fs = require('fs');
 const gulp = require('gulp');
-const cp = require('child_process');
 const $ = require('gulp-load-plugins')();
 const del = require('del');
 const browserSync = require('browser-sync');
 const browserify = require('browserify');
+const errorify = require('errorify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const log = require('fancy-log');
-const SassString = require('node-sass').types.String;
-const notifier = require('node-notifier');
 const historyApiFallback = require('connect-history-api-fallback');
 const through2 = require('through2');
+
+const {
+  compile: collecticonsCompile
+} = require('collecticons-processor');
 
 // /////////////////////////////////////////////////////////////////////////////
 // --------------------------- Variables -------------------------------------//
@@ -75,7 +77,6 @@ function serve () {
   ], bs.reload);
 
   gulp.watch('app/assets/icons/collecticons/**', collecticons);
-  gulp.watch('app/assets/styles/**/*.scss', styles);
   gulp.watch('app/assets/scripts/**/**', javascript);
   gulp.watch('package.json', vendorScripts);
 }
@@ -85,8 +86,7 @@ module.exports.serve = gulp.series(
   collecticons,
   gulp.parallel(
     vendorScripts,
-    javascript,
-    styles
+    javascript
   ),
   serve
 );
@@ -97,7 +97,6 @@ module.exports.default = gulp.series(
     vendorScripts,
     javascript
   ),
-  styles,
   gulp.parallel(
     html,
     imagesImagemin
@@ -116,28 +115,24 @@ module.exports.default = gulp.series(
 function javascript () {
   // Ensure package is updated.
   const pkg = readPackage();
-  return browserify({
+  const b = browserify({
     entries: ['./app/assets/scripts/main.js'],
     debug: true,
     cache: {},
     packageCache: {},
     bundleExternal: false,
     fullPaths: true
-  })
-    .external(pkg.dependencies ? Object.keys(pkg.dependencies) : [])
-    .bundle()
-    .on('error', function (e) {
-      notifier.notify({
-        title: 'Oops! Browserify errored:',
-        message: e.message
-      });
-      console.log('Javascript error:', e); // eslint-disable-line
-      if (isProd()) {
-        throw new Error(e);
-      }
-      // Allows the watch to continue.
-      this.emit('end');
-    })
+  }).external(pkg.dependencies ? Object.keys(pkg.dependencies) : []);
+
+  if (!isProd()) {
+    b.plugin(errorify);
+  } else {
+    b.on('error', function (e) {
+      throw new Error(e);
+    });
+  }
+
+  return b.bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe($.sourcemaps.init({ loadMaps: true }))
@@ -170,25 +165,16 @@ function vendorScripts () {
 // --------------------- (Font generation related) ---------------------------//
 // ---------------------------------------------------------------------------//
 function collecticons () {
-  var args = [
-    'node_modules/collecticons-processor/bin/collecticons.js',
-    'compile',
-    'app/assets/icons/collecticons/',
-    '--font-embed',
-    '--font-dest', 'app/assets/fonts',
-    '--font-name', 'Collecticons',
-    '--font-types', 'woff',
-    '--style-format', 'sass',
-    '--style-dest', 'app/assets/styles/core/',
-    '--style-name', 'collecticons',
-    '--class-name', 'collecticon',
-    '--author-name', 'Development Seed',
-    '--author-url', 'https://developmentseed.org/',
-    '--no-preview',
-    '--catalog-dest', 'app/assets/scripts/collecticons/'
-  ];
-
-  return cp.spawn('node', args, { stdio: 'inherit' });
+  return collecticonsCompile({
+    dirPath: 'app/assets/icons/collecticons/',
+    fontName: 'Collecticons',
+    authorName: 'Development Seed',
+    authorUrl: 'https://developmentseed.org/',
+    catalogDest: 'app/assets/scripts/atomic-components/collecticons/',
+    preview: false,
+    experimentalFontOnCatalog: true,
+    experimentalDisableStyles: true
+  });
 }
 
 // //////////////////////////////////////////////////////////////////////////////
@@ -198,39 +184,6 @@ function collecticons () {
 function finish () {
   return gulp.src('dist/**/*')
     .pipe($.size({ title: 'build', gzip: true }));
-}
-
-function styles () {
-  return gulp.src('app/assets/styles/main.scss')
-    .pipe($.plumber(function (e) {
-      notifier.notify({
-        title: 'Oops! Sass errored:',
-        message: e.message
-      });
-      console.log('Sass error:', e.toString()); // eslint-disable-line
-      if (isProd()) {
-        throw new Error(e);
-      }
-      // Allows the watch to continue.
-      this.emit('end');
-    }))
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({
-      outputStyle: 'expanded',
-      precision: 10,
-      functions: {
-        'urlencode($url)': function (url) {
-          var v = new SassString();
-          v.setValue(encodeURIComponent(url.getValue()));
-          return v;
-        }
-      },
-      includePaths: require('bourbon').includePaths.concat('node_modules/jeet')
-    }))
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest('.tmp/assets/styles'))
-    // https://browsersync.io/docs/gulp#gulp-sass-maps
-    .pipe(bs.stream({ match: '**/*.css' }));
 }
 
 // After being rendered by jekyll process the html files. (merge css files, etc)
