@@ -110,6 +110,7 @@
     "mapillary-js": "^2.15.0",
     "polished": "^2.3.3",
     "prop-types": "^15.6.2",
+    "qs": "^6.6.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-helmet": "^5.2.0",

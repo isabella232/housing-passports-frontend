@@ -95,7 +95,7 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
-            <PassportClose element={Link} to='/' variation='base-plain' hideText>Close passport</PassportClose>
+            <PassportClose element={Link} to={{ pathname: '/', search: this.props.searchQS }} variation='base-plain' hideText>Close passport</PassportClose>
             {/* <VerticalDivider /> */}
           </PassportToolbar>
         </PassportHeader>
@@ -123,7 +123,8 @@ if (environment !== 'production') {
   Passport.propTypes = {
     className: T.string,
     rooftop: T.object,
-    visible: T.bool
+    visible: T.bool,
+    searchQS: T.string
   };
 }
 

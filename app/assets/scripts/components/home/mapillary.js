@@ -50,11 +50,12 @@ class MapillaryView extends React.PureComponent {
       mlyConfig
     );
 
-    this.mly.moveCloseTo(4.549837141933978, -74.16000750189613);
+    const [lon, lat] = this.props.coordinates;
+    this.mly.moveCloseTo(lat, lon);
 
     // Update coordinates when the user navigates.
     this.mly.on(Mapillary.Viewer.nodechanged, node =>
-      this.props.onCoordinatesChange([node.latLon.lon, node.latLon.lat])
+      this.props.onCoordinatesChange([node.originalLatLon.lon, node.originalLatLon.lat])
     );
 
     // Update the bearing on rotation.
@@ -223,6 +224,7 @@ if (environment !== 'production') {
   MapillaryView.propTypes = {
     theme: T.object,
     vizView: T.string,
+    coordinates: T.array,
     onCoordinatesChange: T.func,
     onBearingChange: T.func,
     onMarkerHover: T.func,

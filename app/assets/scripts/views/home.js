@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { PropTypes as T } from 'prop-types';
 import { connect } from 'react-redux';
+import qs from 'qs';
 
 import { environment } from '../config';
 import { themeVal } from '../atomic-components/utils/functions';
@@ -109,7 +110,7 @@ class Home extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      mapillaryPos: [-74.1613, 4.5481],
+      mapView: this.getQSCoords(props),
       mapillaryBearing: 0,
 
       hoverFeatureId: null,
@@ -124,6 +125,7 @@ class Home extends React.Component {
 
     this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
     this.onMapboxFeatureClick = this.onMapboxFeatureClick.bind(this);
+    this.onMapboxZoom = this.onMapboxZoom.bind(this);
   }
 
   componentDidMount () {
@@ -144,8 +146,35 @@ class Home extends React.Component {
     }
   }
 
-  onMapillaryCoordsChange (lnglat) {
-    this.setState({ mapillaryPos: lnglat });
+  getQSCoords (props) {
+    const defVals = {
+      lat: 4.5481,
+      lon: -74.1613,
+      zoom: 16
+    };
+
+    const qsParams = qs.parse(props.location.search.substr(1));
+    if (!qsParams.map) return defVals;
+
+    const vals = qsParams.map.split(',').map(parseFloat);
+    if (vals.length !== 3 || vals.some(isNaN)) return defVals;
+
+    const [lon, lat, zoom] = vals;
+    if (lon < -180 || lon > 180 || lat < -90 || lat > 90) return defVals;
+
+    return { lon, lat, zoom };
+  }
+
+  onMapillaryCoordsChange ([lon, lat]) {
+    this.setState({ mapView: {
+      ...this.state.mapView,
+      lon,
+      lat
+    } });
+
+    this.props.history.push({
+      search: `map=${lon},${lat},${this.state.mapView.zoom}`
+    });
   }
 
   onMapillaryBearingChange (bearing) {
@@ -161,11 +190,22 @@ class Home extends React.Component {
   }
 
   onMapillaryMarkerClick (id) {
-    this.props.history.push(`/passport/${id}`);
+    this.props.history.push({ pathname: `/passport/${id}`, search: this.props.location.search });
   }
 
   onMapboxFeatureClick (id) {
-    this.props.history.push(`/passport/${id}`);
+    this.props.history.push({ pathname: `/passport/${id}`, search: this.props.location.search });
+  }
+
+  onMapboxZoom (zoom) {
+    this.setState({ mapView: {
+      ...this.state.mapView,
+      zoom
+    } });
+
+    this.props.history.push({
+      search: `map=${this.state.mapView.lon},${this.state.mapView.lat},${zoom}`
+    });
   }
 
   onVizViewClick (type) {
@@ -217,6 +257,7 @@ class Home extends React.Component {
             <StreetViz>
               <MapillaryView
                 vizView={this.state.vizView}
+                coordinates={[this.state.mapView.lon, this.state.mapView.lat]}
                 rooftopCentroids={this.props.rooftopCentroids.getData(null)}
                 onCoordinatesChange={this.onMapillaryCoordsChange}
                 onBearingChange={this.onMapillaryBearingChange}
@@ -232,10 +273,12 @@ class Home extends React.Component {
             <OverheadViz>
               <MapboxView
                 vizView={this.state.vizView}
-                markerPos={this.state.mapillaryPos}
+                zoom={this.state.mapView.zoom}
+                markerPos={[this.state.mapView.lon, this.state.mapView.lat]}
                 markerBearing={this.state.mapillaryBearing}
                 onFeatureHover={this.onMapboxFeatureHover}
                 onFeatureClick={this.onMapboxFeatureClick}
+                onZoom={this.onMapboxZoom}
                 highlightFeatureId={this.state.hoverFeatureId}
                 selectedFeatureId={rooftopId}
               />
@@ -246,6 +289,7 @@ class Home extends React.Component {
         <Passport
           visible={!!this.props.match.params.rooftop}
           rooftop={this.props.rooftop}
+          searchQS={this.props.location.search}
         />
       </Page>
     );
@@ -259,6 +303,7 @@ if (environment !== 'production') {
     rooftopCentroids: T.object,
     rooftop: T.object,
     match: T.object,
+    location: T.object,
     history: T.object
   };
 }
