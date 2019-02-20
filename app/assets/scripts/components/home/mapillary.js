@@ -55,7 +55,10 @@ class MapillaryView extends React.PureComponent {
 
     // Update coordinates when the user navigates.
     this.mly.on(Mapillary.Viewer.nodechanged, node =>
-      this.props.onCoordinatesChange([node.originalLatLon.lon, node.originalLatLon.lat])
+      this.props.onCoordinatesChange([
+        node.originalLatLon.lon,
+        node.originalLatLon.lat
+      ])
     );
 
     // Update the bearing on rotation.
@@ -154,7 +157,10 @@ class MapillaryView extends React.PureComponent {
     // Fly to location if centerKey was updated.
     // This key is used to trigger an update in certain situations.
     // This is only used when a new rooftop gets selected.
-    if (this.props.rooftopCoords && this.props.centerKey !== prevProps.centerKey) {
+    if (
+      this.props.rooftopCoords &&
+      this.props.centerKey !== prevProps.centerKey
+    ) {
       const [lon, lat] = this.props.rooftopCoords;
       this.mly.moveCloseTo(lat, lon);
     }

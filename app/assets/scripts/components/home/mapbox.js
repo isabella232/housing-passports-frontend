@@ -98,7 +98,10 @@ class MapboxView extends React.PureComponent {
     // Fly to location if rooftopCoords was updated.
     // This key is used to trigger an update in certain situations.
     // This is only used when a new rooftop gets selected.
-    if (this.props.rooftopCoords && this.props.centerKey !== prevProps.centerKey) {
+    if (
+      this.props.rooftopCoords &&
+      this.props.centerKey !== prevProps.centerKey
+    ) {
       this.map.flyTo({ center: this.props.rooftopCoords, zoom: 18 });
     }
   }
@@ -161,7 +164,9 @@ class MapboxView extends React.PureComponent {
 
       this.map.on('click', e => {
         const id = getFeatIdAtPoint(e.point);
-        if (id !== null && id !== this.props.selectedFeatureId) { this.props.onFeatureClick(id); }
+        if (id !== null && id !== this.props.selectedFeatureId) {
+          this.props.onFeatureClick(id);
+        }
       });
 
       this.map.on('zoomend', () => {

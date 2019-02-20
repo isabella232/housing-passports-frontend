@@ -176,11 +176,13 @@ class Home extends React.Component {
   }
 
   onMapillaryCoordsChange ([lon, lat]) {
-    this.setState({ mapView: {
-      ...this.state.mapView,
-      lon,
-      lat
-    } });
+    this.setState({
+      mapView: {
+        ...this.state.mapView,
+        lon,
+        lat
+      }
+    });
 
     this.props.history.push({
       search: `map=${lon},${lat},${this.state.mapView.zoom}`
@@ -200,18 +202,26 @@ class Home extends React.Component {
   }
 
   onMapillaryMarkerClick (id) {
-    this.props.history.push({ pathname: `/passport/${id}`, search: this.props.location.search });
+    this.props.history.push({
+      pathname: `/passport/${id}`,
+      search: this.props.location.search
+    });
   }
 
   onMapboxFeatureClick (id) {
-    this.props.history.push({ pathname: `/passport/${id}`, search: this.props.location.search });
+    this.props.history.push({
+      pathname: `/passport/${id}`,
+      search: this.props.location.search
+    });
   }
 
   onMapboxZoom (zoom) {
-    this.setState({ mapView: {
-      ...this.state.mapView,
-      zoom
-    } });
+    this.setState({
+      mapView: {
+        ...this.state.mapView,
+        zoom
+      }
+    });
 
     this.props.history.push({
       search: `map=${this.state.mapView.lon},${this.state.mapView.lat},${zoom}`
@@ -338,13 +348,20 @@ if (environment !== 'production') {
 function mapStateToProps (state, props) {
   return {
     rooftopCentroids: wrapApiResult(state.rooftops.centroids),
-    rooftop: wrapApiResult(getFromState(state, ['rooftops', 'individualRooftops', props.match.params.rooftop]))
+    rooftop: wrapApiResult(
+      getFromState(state, [
+        'rooftops',
+        'individualRooftops',
+        props.match.params.rooftop
+      ])
+    )
   };
 }
 
 function dispatcher (dispatch) {
   return {
-    fetchRooftopCentroids: (...args) => dispatch(fetchRooftopCentroids(...args)),
+    fetchRooftopCentroids: (...args) =>
+      dispatch(fetchRooftopCentroids(...args)),
     fetchRooftop: (...args) => dispatch(fetchRooftop(...args))
   };
 }
