@@ -219,7 +219,8 @@ const VerticalDivider = styled.hr`
   width: ${divide(themeVal('layout.globalSpacing'), 2)};
   height: ${themeVal('layout.globalSpacing')};
   margin: 0;
-  background: transparent
+  background:
+    transparent
     linear-gradient(
       90deg,
       ${themeVal('colors.baseAlphaColor')},
