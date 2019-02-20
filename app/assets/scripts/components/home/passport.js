@@ -96,9 +96,9 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
-            <PassportCenter element={Link} to='/' variation='base-plain' hideText>Center map here</PassportCenter>
+            <PassportCenter variation='base-plain' hideText onClick={this.props.onRecenterClick} title='Recenter map views'>Center map here</PassportCenter>
             <VerticalDivider />
-            <PassportClose element={Link} to={{ pathname: '/', search: this.props.searchQS }} variation='base-plain' hideText>Close passport</PassportClose>
+            <PassportClose element={Link} to={{ pathname: '/', search: this.props.searchQS }} variation='base-plain' hideText title='Close passport pane'>Close passport</PassportClose>
           </PassportToolbar>
         </PassportHeader>
 
@@ -123,6 +123,7 @@ class Passport extends React.Component {
 
 if (environment !== 'production') {
   Passport.propTypes = {
+    onRecenterClick: T.func,
     className: T.string,
     rooftop: T.object,
     visible: T.bool,

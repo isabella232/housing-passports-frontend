@@ -132,6 +132,8 @@ class Home extends React.Component {
     this.onMapboxFeatureHover = this.onMapboxFeatureHover.bind(this);
     this.onMapboxFeatureClick = this.onMapboxFeatureClick.bind(this);
     this.onMapboxZoom = this.onMapboxZoom.bind(this);
+
+    this.onRecenterClick = this.onRecenterClick.bind(this);
   }
 
   componentDidMount () {
@@ -218,6 +220,10 @@ class Home extends React.Component {
 
   onVizViewClick (type) {
     this.setState({ vizView: type });
+  }
+
+  onRecenterClick () {
+    this.setState({ centerKey: Date.now() });
   }
 
   render () {
@@ -307,6 +313,7 @@ class Home extends React.Component {
         </Visualizations>
 
         <Passport
+          onRecenterClick={this.onRecenterClick}
           visible={!!this.props.match.params.rooftop}
           rooftop={this.props.rooftop}
           searchQS={this.props.location.search}

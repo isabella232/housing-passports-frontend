@@ -99,7 +99,7 @@ class MapboxView extends React.PureComponent {
     // This key is used to trigger an update in certain situations.
     // This is only used when a new rooftop gets selected.
     if (this.props.rooftopCoords && this.props.centerKey !== prevProps.centerKey) {
-      this.map.flyTo({ center: this.props.rooftopCoords, zoom: 16 });
+      this.map.flyTo({ center: this.props.rooftopCoords, zoom: 18 });
     }
   }
 
