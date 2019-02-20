@@ -7,6 +7,7 @@ import { rgba } from 'polished';
 
 import { environment } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
+import { divide } from '../../atomic-components/utils/math';
 
 import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
 import CarouselModal from './carousel-modal';
@@ -95,8 +96,9 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
+            <PassportCenter element={Link} to='/' variation='base-plain' hideText>Center map here</PassportCenter>
+            <VerticalDivider />
             <PassportClose element={Link} to={{ pathname: '/', search: this.props.searchQS }} variation='base-plain' hideText>Close passport</PassportClose>
-            {/* <VerticalDivider /> */}
           </PassportToolbar>
         </PassportHeader>
 
@@ -164,7 +166,16 @@ const PassportTitle = styled.h1`
 `;
 
 const PassportToolbar = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
   margin-left: auto;
+  align-items: center;
+`;
+
+const PassportCenter = styled(Button)`
+  ::before {
+    ${collecticons('crosshair')}
+  }
 `;
 
 const PassportClose = styled(Button)`
@@ -178,13 +189,13 @@ const PassportBody = styled.div`
   overflow-y: scroll;
 `;
 
-// const VerticalDivider = styled.hr`
-//   border: 0;
-//   width: ${divide(themeVal('layout.globalSpacing'), 2)};
-//   height: ${themeVal('layout.globalSpacing')};
-//   margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
-//   background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
-// `;
+const VerticalDivider = styled.hr`
+  border: 0;
+  width: ${divide(themeVal('layout.globalSpacing'), 2)};
+  height: ${themeVal('layout.globalSpacing')};
+  margin: 0;
+  background: transparent linear-gradient(90deg, ${themeVal('colors.baseAlphaColor')}, ${themeVal('colors.baseAlphaColor')}) 50% / ${themeVal('shape.borderWidth')} auto no-repeat;
+`;
 
 const Section = styled.section`
   padding: ${themeVal('layout.globalSpacing')};
