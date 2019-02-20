@@ -150,6 +150,14 @@ class MapillaryView extends React.PureComponent {
           .map(m => this.createMarker(m.id, m.latLon, m.type))
       );
     }
+
+    // Fly to location if centerKey was updated.
+    // This key is used to trigger an update in certain situations.
+    // This is only used when a new rooftop gets selected.
+    if (this.props.rooftopCoords && this.props.centerKey !== prevProps.centerKey) {
+      const [lon, lat] = this.props.rooftopCoords;
+      this.mly.moveCloseTo(lat, lon);
+    }
   }
 
   /**
@@ -225,6 +233,8 @@ if (environment !== 'production') {
     theme: T.object,
     vizView: T.string,
     coordinates: T.array,
+    rooftopCoords: T.array,
+    centerKey: T.number,
     onCoordinatesChange: T.func,
     onBearingChange: T.func,
     onMarkerHover: T.func,

@@ -115,7 +115,13 @@ class Home extends React.Component {
 
       hoverFeatureId: null,
 
-      vizView: 'split'
+      vizView: 'split',
+
+      // Explanation on centerKey.
+      // There are some occasions (recenter button and selecting a passport)
+      // that should trigger a map recenter. To keep this controlled through
+      // props we change the center key which triggers a render.
+      centerKey: 1
     };
 
     this.onMapillaryCoordsChange = this.onMapillaryCoordsChange.bind(this);
@@ -137,12 +143,14 @@ class Home extends React.Component {
     }
   }
 
-  componentDidUpdate (prevProps) {
+  async componentDidUpdate (prevProps) {
     const currId = this.props.match.params.rooftop;
     const prevId = prevProps.match.params.rooftop;
 
     if (currId && currId !== prevId) {
-      this.props.fetchRooftop(currId);
+      await this.props.fetchRooftop(currId);
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ centerKey: Date.now() });
     }
   }
 
@@ -216,6 +224,14 @@ class Home extends React.Component {
     const rooftopParam = this.props.match.params.rooftop;
     const rooftopId = rooftopParam ? parseInt(rooftopParam) : null;
 
+    let rooftopCoords = null;
+    if (rooftopId !== null) {
+      const centroid = this.props.rooftopCentroids.getData()[rooftopId];
+      if (centroid) {
+        rooftopCoords = centroid.coords;
+      }
+    }
+
     return (
       <Page>
         <PageHeader>
@@ -258,6 +274,8 @@ class Home extends React.Component {
               <MapillaryView
                 vizView={this.state.vizView}
                 coordinates={[this.state.mapView.lon, this.state.mapView.lat]}
+                rooftopCoords={rooftopCoords}
+                centerKey={this.state.centerKey}
                 rooftopCentroids={this.props.rooftopCentroids.getData(null)}
                 onCoordinatesChange={this.onMapillaryCoordsChange}
                 onBearingChange={this.onMapillaryBearingChange}
@@ -273,6 +291,8 @@ class Home extends React.Component {
             <OverheadViz>
               <MapboxView
                 vizView={this.state.vizView}
+                rooftopCoords={rooftopCoords}
+                centerKey={this.state.centerKey}
                 zoom={this.state.mapView.zoom}
                 markerPos={[this.state.mapView.lon, this.state.mapView.lat]}
                 markerBearing={this.state.mapillaryBearing}
