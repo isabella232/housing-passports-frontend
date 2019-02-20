@@ -7,8 +7,12 @@ import { rgba } from 'polished';
 
 import { environment } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
+import { divide } from '../../atomic-components/utils/math';
 
-import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
+import {
+  LoadingSkeleton,
+  LoadingSkeletonGroup
+} from '../common/loading-skeleton';
 import CarouselModal from './carousel-modal';
 import Heading from '../../atomic-components/heading';
 import Dl from '../../atomic-components/definition-list';
@@ -47,9 +51,15 @@ class Passport extends React.Component {
     return (
       <PassportBody>
         <Section>
-          <SectionHeading variation='secondary' size='small'>Location</SectionHeading>
+          <SectionHeading variation='secondary' size='small'>
+            Location
+          </SectionHeading>
           {images.length && (
-            <SectionFigureLink href={`#passport-gallery-${data.id}`} title='Open photo gallery' onClick={this.onGalleryImageClick}>
+            <SectionFigureLink
+              href={`#passport-gallery-${data.id}`}
+              title='Open photo gallery'
+              onClick={this.onGalleryImageClick}
+            >
               <SectionFigure>
                 <img src={images[0]} alt='Passport gallery image cover' />
                 <SectionFigcaption>{images.length} photos</SectionFigcaption>
@@ -64,7 +74,9 @@ class Passport extends React.Component {
           </SectionDl>
         </Section>
         <Section>
-          <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
+          <SectionHeading variation='secondary' size='small'>
+            Evaluation
+          </SectionHeading>
           <SectionDl type='horizontal'>
             {Object.keys(data).map(k => (
               <React.Fragment key={k}>
@@ -95,23 +107,37 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
-            <PassportClose element={Link} to='/' variation='base-plain' hideText>Close passport</PassportClose>
-            {/* <VerticalDivider /> */}
+            <PassportCenter
+              variation='base-plain'
+              hideText
+              onClick={this.props.onRecenterClick}
+              title='Recenter map views'
+            >
+              Center map here
+            </PassportCenter>
+            <VerticalDivider />
+            <PassportClose
+              element={Link}
+              to={{ pathname: '/', search: this.props.searchQS }}
+              variation='base-plain'
+              hideText
+              title='Close passport pane'
+            >
+              Close passport
+            </PassportClose>
           </PassportToolbar>
         </PassportHeader>
 
         {!isReady() && (
           <LoadingSkeletonGroup style={{ padding: '1rem' }}>
-            <LoadingSkeleton type='heading' width={1 / 5}/>
+            <LoadingSkeleton type='heading' width={1 / 5} />
             <LoadingSkeleton width={2 / 3} />
             <LoadingSkeleton width={2 / 3} />
             <LoadingSkeleton width={1 / 4} />
           </LoadingSkeletonGroup>
         )}
 
-        {hasError() && (
-          <p>Passport not found</p>
-        )}
+        {hasError() && <p>Passport not found</p>}
 
         {!hasError() && isReady() && this.renderData()}
       </article>
@@ -121,9 +147,11 @@ class Passport extends React.Component {
 
 if (environment !== 'production') {
   Passport.propTypes = {
+    onRecenterClick: T.func,
     className: T.string,
     rooftop: T.object,
-    visible: T.bool
+    visible: T.bool,
+    searchQS: T.string
   };
 }
 
@@ -163,7 +191,16 @@ const PassportTitle = styled.h1`
 `;
 
 const PassportToolbar = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
   margin-left: auto;
+  align-items: center;
+`;
+
+const PassportCenter = styled(Button)`
+  ::before {
+    ${collecticons('crosshair')}
+  }
 `;
 
 const PassportClose = styled(Button)`
@@ -177,13 +214,20 @@ const PassportBody = styled.div`
   overflow-y: scroll;
 `;
 
-// const VerticalDivider = styled.hr`
-//   border: 0;
-//   width: ${divide(themeVal('layout.globalSpacing'), 2)};
-//   height: ${themeVal('layout.globalSpacing')};
-//   margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
-//   background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
-// `;
+const VerticalDivider = styled.hr`
+  border: 0;
+  width: ${divide(themeVal('layout.globalSpacing'), 2)};
+  height: ${themeVal('layout.globalSpacing')};
+  margin: 0;
+  background:
+    transparent
+    linear-gradient(
+      90deg,
+      ${themeVal('colors.baseAlphaColor')},
+      ${themeVal('colors.baseAlphaColor')}
+    )
+    50% / ${themeVal('shape.borderWidth')} auto no-repeat;
+`;
 
 const Section = styled.section`
   padding: ${themeVal('layout.globalSpacing')};

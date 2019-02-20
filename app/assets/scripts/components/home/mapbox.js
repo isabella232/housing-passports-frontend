@@ -94,14 +94,24 @@ class MapboxView extends React.PureComponent {
         sel === null ? '' : sel
       ]);
     }
+
+    // Fly to location if rooftopCoords was updated.
+    // This key is used to trigger an update in certain situations.
+    // This is only used when a new rooftop gets selected.
+    if (
+      this.props.rooftopCoords &&
+      this.props.centerKey !== prevProps.centerKey
+    ) {
+      this.map.flyTo({ center: this.props.rooftopCoords, zoom: 18 });
+    }
   }
 
   initMap () {
     this.map = new mapboxgl.Map({
-      center: [-74.1613, 4.5481],
+      center: this.props.markerPos,
       container: this.refs.mapEl,
       style: 'mapbox://styles/mapbox/light-v9',
-      zoom: 16,
+      zoom: this.props.zoom,
       pitchWithRotate: false,
       renderWorldCopies: false,
       dragRotate: false,
@@ -154,7 +164,13 @@ class MapboxView extends React.PureComponent {
 
       this.map.on('click', e => {
         const id = getFeatIdAtPoint(e.point);
-        if (id !== null && id !== this.props.selectedFeatureId) { this.props.onFeatureClick(id); }
+        if (id !== null && id !== this.props.selectedFeatureId) {
+          this.props.onFeatureClick(id);
+        }
+      });
+
+      this.map.on('zoomend', () => {
+        this.props.onZoom(this.map.getZoom());
       });
     });
   }
@@ -231,8 +247,12 @@ if (environment !== 'production') {
   MapboxView.propTypes = {
     theme: T.object,
     vizView: T.string,
+    zoom: T.number,
+    centerKey: T.number,
+    rooftopCoords: T.array,
     onFeatureHover: T.func,
     onFeatureClick: T.func,
+    onZoom: T.func,
     markerPos: T.array,
     markerBearing: T.number,
     highlightFeatureId: T.number,
