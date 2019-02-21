@@ -86,10 +86,10 @@ class Passport extends React.Component {
             </SectionFigureLink>
           )}
           <SectionDl type='horizontal'>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-            <dt>Term</dt>
-            <dd>Definition</dd>
+            <dt>Latitude</dt>
+            <dd>{this.props.rooftopCoords[1]}</dd>
+            <dt>Longitude</dt>
+            <dd>{this.props.rooftopCoords[0]}</dd>
           </SectionDl>
         </Section>
 
@@ -160,6 +160,7 @@ if (environment !== 'production') {
     onRecenterClick: T.func,
     className: T.string,
     rooftop: T.object,
+    rooftopCoords: T.array,
     visible: T.bool,
     searchQS: T.string
   };
