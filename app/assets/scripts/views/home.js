@@ -326,6 +326,7 @@ class Home extends React.Component {
           onRecenterClick={this.onRecenterClick}
           visible={!!this.props.match.params.rooftop}
           rooftop={this.props.rooftop}
+          rooftopCoords={rooftopCoords}
           searchQS={this.props.location.search}
         />
       </Page>

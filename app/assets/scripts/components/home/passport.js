@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
+import pick from 'lodash.pick';
 import { Link } from 'react-router-dom';
 import { PropTypes as T } from 'prop-types';
 import { rgba } from 'polished';
@@ -40,6 +41,24 @@ class Passport extends React.Component {
     this.setState({ galleryRevealed: true });
   }
 
+  renderSection (title, data) {
+    return (
+      <Section>
+        <SectionHeading variation='secondary' size='small'>
+          {title}
+        </SectionHeading>
+        <SectionDl type='horizontal'>
+          {Object.keys(data).map(k => (
+            <React.Fragment key={k}>
+              <dt>{k.replace('_', ' ')}</dt>
+              <dd>{data[k].toString()}</dd>
+            </React.Fragment>
+          ))}
+        </SectionDl>
+      </Section>
+    );
+  }
+
   renderData () {
     const data = this.props.rooftop.getData();
 
@@ -67,25 +86,16 @@ class Passport extends React.Component {
             </SectionFigureLink>
           )}
           <SectionDl type='horizontal'>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-            <dt>Term</dt>
-            <dd>Definition</dd>
+            <dt>Latitude</dt>
+            <dd>{this.props.rooftopCoords[1]}</dd>
+            <dt>Longitude</dt>
+            <dd>{this.props.rooftopCoords[0]}</dd>
           </SectionDl>
         </Section>
-        <Section>
-          <SectionHeading variation='secondary' size='small'>
-            Evaluation
-          </SectionHeading>
-          <SectionDl type='horizontal'>
-            {Object.keys(data).map(k => (
-              <React.Fragment key={k}>
-                <dt>{k.replace('_', ' ')}</dt>
-                <dd>{data[k].toString()}</dd>
-              </React.Fragment>
-            ))}
-          </SectionDl>
-        </Section>
+
+        { this.renderSection('Evaluation', pick(data, [ 'area', 'avg_slope', 'avg_height', 'floors', 'roof_material', 'terrain_slope', 'volume' ])) }
+        { this.renderSection('StreetView detection', pick(data, [ 'construction', 'design', 'material' ])) }
+        { this.renderSection('Risk', pick(data, [ 'flood', 'landslide' ])) }
 
         <CarouselModal
           id={`passport-gallery-${data.id}`}
@@ -150,6 +160,7 @@ if (environment !== 'production') {
     onRecenterClick: T.func,
     className: T.string,
     rooftop: T.object,
+    rooftopCoords: T.array,
     visible: T.bool,
     searchQS: T.string
   };
