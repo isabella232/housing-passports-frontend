@@ -22,9 +22,9 @@ export default class LayerControlDropdown extends React.Component {
   render () {
     return (
       <Dropdown
-        triggerElement={<LayerButton variation={'base-raised-light'} hideText >Select map layers</LayerButton>}
+        triggerElement={<LayerButton variation={'base-raised-light'} hideText>Select map layers</LayerButton>}
         direction='right'
-        alignment='middle' >
+        alignment='middle'>
 
         <h6 className='drop__title'>Browse</h6>
         <ul className='drop__menu drop__menu--select'>

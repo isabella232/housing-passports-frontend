@@ -133,7 +133,7 @@ export const FormSwitch = styled(FormSwitchElement)`
     }
   }
 
-  &:hover ${FormOptionUi}::before {
+  &:hover ${/* sc-selector */FormOptionUi}::before {
     ${props =>
     buttonVariationHoverCss(
       props.theme.typography.baseFontColor,
@@ -143,8 +143,8 @@ export const FormSwitch = styled(FormSwitchElement)`
     )}
   }
 
-  ${/* sc-custom */({ checked }) => (checked ? `${FormOptionUi},` : '')}
-  input:checked ~ ${FormOptionUi} {
+  ${({ checked }) => (checked ? `${FormOptionUi},` : '')}
+  input:checked ~ ${FormOptionUi} { /* stylelint-disable-line */
     background: ${themeVal('colors.linkColor')};
 
     &::before {

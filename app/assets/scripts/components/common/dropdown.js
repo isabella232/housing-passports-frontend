@@ -166,7 +166,7 @@ export default class Dropdown extends React.Component {
 
         <TransitionItem
           props={dropdownContentProps}
-          onChange={this.props.onChange} >
+          onChange={this.props.onChange}>
           { this.props.children }
         </TransitionItem>
 
