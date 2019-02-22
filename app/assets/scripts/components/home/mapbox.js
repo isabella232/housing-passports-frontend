@@ -47,6 +47,19 @@ const MapboxFigure = styled.figure`
   }
 `;
 
+const mapLayers = [
+  {
+    id: 'mapbox-satellite',
+    label: 'Mapbox Satellite',
+    initial: false
+  },
+  {
+    id: 2,
+    label: 'layer 2',
+    initial: false
+  }
+];
+
 class MapboxView extends React.PureComponent {
   constructor (props) {
     super(props);
@@ -56,13 +69,21 @@ class MapboxView extends React.PureComponent {
     // 1 - loaded, ready to style
     // 2 - layers added.
     this.mapState = 0;
+
+    this.state = {
+      layersState: mapLayers.map(v => v.initial)
+    };
+
+    this.handleLayerChange = this.handleLayerChange.bind(this);
   }
 
   componentDidMount () {
     this.initMap();
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (prevProps, prevState) {
+    this.layerDropdownControl.render(this.props, this.state);
+
     // When the view changes or when a feature is selected / de-selected
     // resize the map.
     if (
@@ -104,6 +125,26 @@ class MapboxView extends React.PureComponent {
     ) {
       this.map.flyTo({ center: this.props.rooftopCoords, zoom: 18 });
     }
+
+    // Update maplayers if changed.
+    if (prevState.layersState !== this.state.layersState) {
+      mapLayers.forEach((layer, idx) => {
+        this.map.setLayoutProperty(
+          layer.id,
+          'visibility',
+          this.state.layersState[idx] ? 'visible' : 'none'
+        );
+      });
+    }
+  }
+
+  handleLayerChange (layerIdx) {
+    this.setState({
+      // Replace the array index with the negated value.
+      layersState: Object.assign([], this.state.layersState, {
+        [layerIdx]: !this.state.layersState[layerIdx]
+      })
+    });
   }
 
   initMap () {
@@ -115,7 +156,7 @@ class MapboxView extends React.PureComponent {
       pitchWithRotate: false,
       renderWorldCopies: false,
       dragRotate: false,
-      logoPosition: 'bottom-right'
+      logoPosition: 'bottom-left'
     });
 
     // Disable map rotation using right click + drag.
@@ -128,15 +169,19 @@ class MapboxView extends React.PureComponent {
     this.map.scrollZoom.disable();
 
     // Add zoom controls.
-    this.map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+    this.map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
-    this.layerDropdownControl = new MapboxControl(props => (
+    this.layerDropdownControl = new MapboxControl((props, state) => (
       <ThemeProvider theme={props.theme}>
-        <LayerControlDropdown />
+        <LayerControlDropdown
+          layersConfig={mapLayers}
+          layersState={state.layersState}
+          handleLayerChange={this.handleLayerChange}
+        />
       </ThemeProvider>
     ));
 
-    this.map.addControl(this.layerDropdownControl, 'bottom-left');
+    this.map.addControl(this.layerDropdownControl, 'bottom-right');
 
     // Initial rendering.
     this.layerDropdownControl.render(this.props, this.state);
@@ -179,6 +224,23 @@ class MapboxView extends React.PureComponent {
     if (!this.mapState || this.map.getSource('housing-passports-rooftops')) {
       return;
     }
+
+    // Add toggable layers.
+    const mapboxIdx = mapLayers.findIndex(o => o.id === 'mapbox-satellite');
+    this.map.addSource('mapbox-satellite', {
+      type: 'raster',
+      tiles: [
+        `https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=${mbtoken}`
+      ]
+    });
+    this.map.addLayer({
+      id: 'mapbox-satellite',
+      type: 'raster',
+      source: 'mapbox-satellite',
+      layout: {
+        visibility: this.state.layersState[mapboxIdx] ? 'visible' : 'none'
+      }
+    });
 
     this.map.addSource('housing-passports-rooftops', {
       type: 'vector',
