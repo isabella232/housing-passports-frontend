@@ -114,8 +114,9 @@ class CarouselModal extends React.Component {
             <ModalToolbar>
               <ModalClose
                 variation='base-plain'
-                hideText
                 title='Close gallery'
+                hideText
+                onClick={this.props.onCloseClick}
               >
                 Close gallery
               </ModalClose>

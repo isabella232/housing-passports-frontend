@@ -26,7 +26,7 @@ class Passport extends React.Component {
     super(props);
 
     this.state = {
-      galleryRevealed: true
+      galleryRevealed: false
     };
 
     this.onModalCloseClick = this.onModalCloseClick.bind(this);
