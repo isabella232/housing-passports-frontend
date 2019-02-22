@@ -67,6 +67,8 @@ class Passport extends React.Component {
       'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg'
     ];
 
+    const [lon, lat] = this.props.rooftopCoords || ['n/a', 'n/a'];
+
     return (
       <PassportBody>
         <Section>
@@ -87,9 +89,9 @@ class Passport extends React.Component {
           )}
           <SectionDl type='horizontal'>
             <dt>Latitude</dt>
-            <dd>{this.props.rooftopCoords[1]}</dd>
+            <dd>{lat}</dd>
             <dt>Longitude</dt>
-            <dd>{this.props.rooftopCoords[0]}</dd>
+            <dd>{lon}</dd>
           </SectionDl>
         </Section>
 
