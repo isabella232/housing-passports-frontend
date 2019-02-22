@@ -25,7 +25,7 @@ class Passport extends React.Component {
     super(props);
 
     this.state = {
-      galleryRevealed: false
+      galleryRevealed: true
     };
 
     this.onModalCloseClick = this.onModalCloseClick.bind(this);
@@ -201,13 +201,13 @@ const PassportToolbar = styled.div`
 `;
 
 const PassportCenter = styled(Button)`
-  ::before {
+  &::before {
     ${collecticons('crosshair')}
   }
 `;
 
 const PassportClose = styled(Button)`
-  ::before {
+  &::before {
     ${collecticons('xmark')}
   }
 `;
