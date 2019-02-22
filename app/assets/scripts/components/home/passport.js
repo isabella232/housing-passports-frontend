@@ -9,6 +9,7 @@ import { rgba } from 'polished';
 import { environment } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
 import { divide } from '../../atomic-components/utils/math';
+import { antialiased } from '../../atomic-components/utils';
 
 import {
   LoadingSkeleton,
@@ -25,7 +26,7 @@ class Passport extends React.Component {
     super(props);
 
     this.state = {
-      galleryRevealed: false
+      galleryRevealed: true
     };
 
     this.onModalCloseClick = this.onModalCloseClick.bind(this);
@@ -76,16 +77,18 @@ class Passport extends React.Component {
             Location
           </SectionHeading>
           {images.length && (
-            <SectionFigureLink
-              href={`#passport-gallery-${data.id}`}
-              title='Open photo gallery'
-              onClick={this.onGalleryImageClick}
-            >
-              <SectionFigure>
-                <img src={images[0]} alt='Passport gallery image cover' />
+            <SectionFigure>
+              <SectionFigureLink
+                href={`#passport-gallery-${data.id}`}
+                title='Open photo gallery'
+                onClick={this.onGalleryImageClick}
+              >
+                <SectionFigureThumb>
+                  <img src={images[0]} alt='Passport gallery image cover' />
+                </SectionFigureThumb>
                 <SectionFigcaption>{images.length} photos</SectionFigcaption>
-              </SectionFigure>
-            </SectionFigureLink>
+              </SectionFigureLink>
+            </SectionFigure>
           )}
           <SectionDl type='horizontal'>
             <dt>Latitude</dt>
@@ -211,13 +214,13 @@ const PassportToolbar = styled.div`
 `;
 
 const PassportCenter = styled(Button)`
-  ::before {
+  &::before {
     ${collecticons('crosshair')}
   }
 `;
 
 const PassportClose = styled(Button)`
-  ::before {
+  &::before {
     ${collecticons('xmark')}
   }
 `;
@@ -243,9 +246,9 @@ const VerticalDivider = styled.hr`
 `;
 
 const Section = styled.section`
-  padding: ${themeVal('layout.globalSpacing')};
   display: flex;
   flex-flow: column;
+  padding: ${themeVal('layout.globalSpacing')};
 
   &:not(:last-child) {
     box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
@@ -269,34 +272,71 @@ const SectionDl = styled(Dl)`
     line-height: 1rem;
   }
 
+  dt {
+    font-weight: ${themeVal('typography.headingFontRegular')};
+  }
+
   dd {
     font-weight: ${themeVal('typography.baseFontBold')};
   }
 `;
 
-const SectionFigureLink = styled.a`
+const SectionFigure = styled.figure`
+  ${antialiased()}
+  position: relative;
   order: -1;
+  margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  font-weight: ${themeVal('typography.baseFontBold')};
 `;
 
-const SectionFigure = styled.figure`
+const SectionFigureLink = styled.a`
   position: relative;
-  margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: ${themeVal('layout.globalSpacing')};
+  min-height: 12rem;
+  color: inherit;
+`;
+
+const SectionFigureThumb = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
   border-radius: ${themeVal('shape.rounded')};
   overflow: hidden;
-  box-shadow: 0 0 0 1px ${({ theme }) => rgba(theme.colors.baseColor, 0.16)};
+  background: ${themeVal('colors.baseAlphaColor')};
 
   > img {
+    height: 100%;
     width: 100%;
+    object-fit: cover;
+    z-index: 1;
     display: block;
+  }
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    content: '';
+    border-radius: ${themeVal('shape.rounded')};
+    background: linear-gradient(-45deg, ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%, ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%);;
+    pointer-events: none;
   }
 `;
 
 const SectionFigcaption = styled.figcaption`
-  position: absolute;
-  bottom: ${themeVal('layout.globalSpacing')};
-  right: ${themeVal('layout.globalSpacing')};
-  z-index: 10;
-  color: #fff;
-  line-height: 1;
-  text-shadow: 0 0 8px ${({ theme }) => rgba(theme.colors.baseColor, 0.64)};
+  position: relative;
+  z-index: 3;
 `;
