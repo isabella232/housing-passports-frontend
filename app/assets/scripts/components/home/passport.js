@@ -331,7 +331,7 @@ const SectionFigureThumb = styled.div`
     z-index: 3;
     content: '';
     border-radius: ${themeVal('shape.rounded')};
-    background: linear-gradient(-45deg, ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%, ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%);;
+    background: linear-gradient(-45deg, ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%, ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%);
     pointer-events: none;
   }
 `;
