@@ -10,8 +10,7 @@ import Button from '../../atomic-components/button';
 import { FormSwitch } from '../../atomic-components/form-options';
 import collecticon from '../../atomic-components/collecticons';
 import { themeVal } from '../../atomic-components/utils/functions';
-import { rgba, clearFix } from 'polished';
-import { divide } from '../../atomic-components/utils/math';
+import { rgba } from 'polished';
 import { headingAlt } from '../../atomic-components/heading';
 
 const LayerButton = styled(Button)`
@@ -52,6 +51,11 @@ const LayersList = styled.ul`
   }
 `;
 
+const LayerSwitch = styled(FormSwitch)`
+  display: grid;
+  grid-template-columns: 1fr auto;
+`;
+
 // React component for the layer control.
 // It is disconnected from the global state because it needs to be included
 // via the mapbox code.
@@ -71,14 +75,14 @@ export default class LayerControlDropdown extends React.Component {
         <LayersList>
           {this.props.layersConfig.map((layer, idx) => (
             <li key={layer.id}>
-              <FormSwitch
+              <LayerSwitch
                 name={`switch-${layer.id}`}
                 title='Toggle layer on/off'
                 checked={this.props.layersState[idx]}
                 onChange={() => this.props.handleLayerChange(idx)}
               >
                 {layer.label}
-              </FormSwitch>
+              </LayerSwitch>
             </li>
           ))}
         </LayersList>

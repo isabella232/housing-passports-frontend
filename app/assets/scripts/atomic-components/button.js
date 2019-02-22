@@ -93,7 +93,7 @@ const Button = styled(BaseButton)`
   }
 
   &:hover {
-    opacity: initial;
+    opacity: 1;
   }
 
   ${({ active }) => (active ? '&,' : '')}
