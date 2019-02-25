@@ -98,9 +98,23 @@ class Passport extends React.Component {
           </SectionDl>
         </Section>
 
-        { this.renderSection('Evaluation', pick(data, [ 'area', 'avg_slope', 'avg_height', 'floors', 'roof_material', 'terrain_slope', 'volume' ])) }
-        { this.renderSection('StreetView detection', pick(data, [ 'construction', 'design', 'material' ])) }
-        { this.renderSection('Risk', pick(data, [ 'flood', 'landslide' ])) }
+        {this.renderSection(
+          'Evaluation',
+          pick(data, [
+            'AREA',
+            'AVG_SLOPE',
+            'AVG_HEIGHT',
+            'FLOORS',
+            'ROOF_MATERIAL',
+            'TERRAIN_SLOPE',
+            'VOLUME'
+          ])
+        )}
+        {this.renderSection(
+          'StreetView detection',
+          pick(data, ['CONSTRUCTION', 'DESIGN', 'MATERIAL'])
+        )}
+        {this.renderSection('Risk', pick(data, ['FLOOD', 'LANDSLIDE']))}
 
         <CarouselModal
           id={`passport-gallery-${data.id}`}
@@ -331,7 +345,12 @@ const SectionFigureThumb = styled.div`
     z-index: 3;
     content: '';
     border-radius: ${themeVal('shape.rounded')};
-    background: linear-gradient(-45deg, ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%, ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%);
+    background:
+      linear-gradient(
+        -45deg,
+        ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%,
+        ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%
+      );
     pointer-events: none;
   }
 `;

@@ -15,7 +15,7 @@ import AbsoluteContainer from '../../atomic-components/absolute-container';
 import MapboxControl from '../common/mapbox-react-control';
 import LayerControlDropdown from './map-layer-control';
 import collecticon from '../../atomic-components/collecticons';
-import { lighten } from 'polished';
+import { lighten, rgba } from 'polished';
 
 // set once
 mapboxgl.accessToken = mbtoken;
@@ -101,9 +101,9 @@ class MapboxView extends React.PureComponent {
     const hl = this.props.highlightFeatureId;
     if (hl !== prevProps.highlightFeatureId && this.mapState >= 2) {
       this.map.setFilter('rooftop-highlight', [
-        '==',
-        'id',
-        hl === null ? '' : hl
+        'all',
+        ['==', 'id', hl === null ? '' : hl],
+        ['has', 'material_ml']
       ]);
     }
 
@@ -197,7 +197,11 @@ class MapboxView extends React.PureComponent {
         const features = this.map.queryRenderedFeatures(point, {
           layers: ['rooftops']
         });
-        return features.length ? features[0].properties.id : null;
+        if (!features.length) return null;
+        // Only return a feature if it has ml data.
+        return features[0].properties.material_ml
+          ? features[0].properties.id
+          : null;
       };
 
       const mouseMoveDebounced = throttle(e => {
@@ -260,7 +264,13 @@ class MapboxView extends React.PureComponent {
       'source-layer': 'rooftops',
       type: 'fill',
       paint: {
-        'fill-color': props.theme.colors.secondaryColor
+        // 'fill-color': props.theme.colors.secondaryColor
+        'fill-color': [
+          'case',
+          ['has', 'material_ml'],
+          props.theme.colors.secondaryColor,
+          rgba(props.theme.colors.secondaryColor, 0.32)
+        ]
       }
     });
 
@@ -273,7 +283,11 @@ class MapboxView extends React.PureComponent {
       paint: {
         'fill-color': lighten(0.2, props.theme.colors.primaryColor)
       },
-      filter: ['==', 'id', hl === null ? '' : hl]
+      filter: [
+        'all',
+        ['==', 'id', hl === null ? '' : hl],
+        ['has', 'material_ml']
+      ]
     });
 
     const sel = props.selectedFeatureId;
