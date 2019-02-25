@@ -17,7 +17,8 @@ async function splitCommand (file, command) {
 
     // Create tasks.
     const tasks = data.features.map(async feat => {
-      const fid = feat.properties.id !== undefined ? feat.properties.id + '' : 'no-id';
+      const fid =
+        feat.properties.id !== undefined ? feat.properties.id + '' : 'no-id';
       const dest = path.join(command.O, `${fid}.json`);
 
       let images = [];
@@ -79,16 +80,19 @@ async function point2json (file, dest) {
 //                              SCRIPT SETUP                                 ///
 // /////////////////////////////////////////////////////////////////////////////
 
-program
-  .version('0.1.0');
+program.version('0.1.0');
 
-program.command('split <file>')
+program
+  .command('split <file>')
   .option('-o <dir>', 'output folder')
   .option('-i <dir>', 'images folder')
   .action(splitCommand);
 
-program.command('point2json <file> <dest>')
-  .description('Extracts the point coordinates from the input file geoJSON into a JSON array')
+program
+  .command('point2json <file> <dest>')
+  .description(
+    'Extracts the point coordinates from the input file geoJSON into a JSON array'
+  )
   .action(point2json);
 
 program.parse(process.argv);
