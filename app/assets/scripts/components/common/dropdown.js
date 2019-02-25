@@ -130,6 +130,8 @@ export default class Dropdown extends React.Component {
 
     return React.cloneElement(triggerElement, {
       onClick: this._toggleDropdown,
+      active: this.state.open,
+      className: this.state.open ? 'active' : '',
       'data-drop-el': 'trigger',
       'data-drop-instance': this.uuid
     });
@@ -166,7 +168,7 @@ export default class Dropdown extends React.Component {
 
         <TransitionItem
           props={dropdownContentProps}
-          onChange={this.props.onChange} >
+          onChange={this.props.onChange}>
           { this.props.children }
         </TransitionItem>
 

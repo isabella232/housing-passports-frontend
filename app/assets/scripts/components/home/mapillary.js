@@ -38,7 +38,7 @@ class MapillaryView extends React.PureComponent {
       component: {
         cover: false,
         marker: {
-          visibleBBoxSize: 50
+          visibleBBoxSize: 30
         }
       }
     };

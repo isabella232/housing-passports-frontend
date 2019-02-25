@@ -1,5 +1,5 @@
 'use strict';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { themeVal } from './utils/functions';
 
@@ -46,3 +46,10 @@ Heading.defaultProps = {
 };
 
 export default Heading;
+
+export const headingAlt = () => css`
+  font-feature-settings: "pnum" 0; /* Use proportional numbers */
+  font-family: ${themeVal('typography.headingFontFamily')};
+  font-weight: ${themeVal('typography.headingFontRegular')};
+  text-transform: uppercase;
+`;
