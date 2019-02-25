@@ -34,8 +34,7 @@ export function fetchRooftopCentroids () {
     statePath: 'rooftops.centroids',
     url: `${baseurl}/assets/data/rooftops-centroids.json`,
     requestFn: requestRooftopCentroids,
-    receiveFn: receiveRooftopCentroids,
-    mutator: response => response.map((coords, id) => ({ id, coords }))
+    receiveFn: receiveRooftopCentroids
   });
 }
 

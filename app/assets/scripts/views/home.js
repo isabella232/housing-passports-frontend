@@ -242,9 +242,11 @@ class Home extends React.Component {
 
     let rooftopCoords = null;
     if (rooftopId !== null) {
-      const centroid = this.props.rooftopCentroids.getData()[rooftopId];
+      const centroid = this.props.rooftopCentroids
+        .getData([])
+        .find(o => o.i === rooftopId);
       if (centroid) {
-        rooftopCoords = centroid.coords;
+        rooftopCoords = centroid.c;
       }
     }
 
