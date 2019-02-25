@@ -60,10 +60,10 @@ async function point2json (file, dest) {
         throw new Error('Non Point feature type found in source geoJSON');
       }
       const [lon, lat] = f.geometry.coordinates;
-      return [
-        Math.round(lon * 1e6) / 1e6,
-        Math.round(lat * 1e6) / 1e6
-      ];
+      return {
+        i: f.properties.ID,
+        c: [Math.round(lon * 1e6) / 1e6, Math.round(lat * 1e6) / 1e6]
+      };
     });
 
     await fs.writeJSON(dest, centroids);
