@@ -8,6 +8,7 @@ import { collecticonsFont } from './atomic-components/collecticons';
 // This way they're only rendered when absolutely needed.
 import mapboxStyle from './vendor/mapbox';
 import mapillaryStyle from './vendor/mapillary';
+import reactResponsiveCarouselStyle from './vendor/react-responsive-carousel';
 
 const baseStyles = css`
   html {
@@ -64,4 +65,5 @@ export default createGlobalStyle`
   ${baseStyles}
   ${mapboxStyle}
   ${mapillaryStyle}
+  ${reactResponsiveCarouselStyle}
 `;
