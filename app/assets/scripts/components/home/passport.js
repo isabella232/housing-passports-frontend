@@ -113,7 +113,7 @@ class Passport extends React.Component {
         )}
         {this.renderSection(
           'StreetView detection',
-          pick(data, ['CONSTRUCTION', 'DESIGN', 'MATERIAL'])
+          pick(data, [ 'construction_ml', 'design_ml', 'material_ml' ])
         )}
         {this.renderSection('Risk', pick(data, ['FLOOD', 'LANDSLIDE']))}
 
