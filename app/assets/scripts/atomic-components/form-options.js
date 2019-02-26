@@ -77,7 +77,7 @@ const formOption = css`
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   grid-gap: 1rem;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   cursor: pointer;
 

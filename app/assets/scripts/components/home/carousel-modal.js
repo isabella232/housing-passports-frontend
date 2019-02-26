@@ -47,8 +47,6 @@ const ModalSubtitle = styled.p`
 `;
 
 const ModalBodyCarousel = styled(ModalBody)`
-  height: calc(100vh - 6rem);
-
   > div {
     height: 100%;
     display: flex;

@@ -65,6 +65,7 @@ class Passport extends React.Component {
 
     const images = [
       'https://c1.staticflickr.com/4/3398/3201376678_f48c0d5e0f_b.jpg',
+      'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg',
       'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg'
     ];
 
@@ -274,7 +275,7 @@ const Section = styled.section`
 `;
 
 const SectionHeading = styled(Heading)`
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
 `;
 
 const SectionDl = styled(Dl)`
