@@ -26,7 +26,7 @@ class Passport extends React.Component {
     super(props);
 
     this.state = {
-      galleryRevealed: true
+      galleryRevealed: false
     };
 
     this.onModalCloseClick = this.onModalCloseClick.bind(this);
@@ -261,7 +261,7 @@ const Section = styled.section`
 `;
 
 const SectionHeading = styled(Heading)`
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
 `;
 
 const SectionDl = styled(Dl)`
