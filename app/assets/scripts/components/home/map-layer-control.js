@@ -22,7 +22,7 @@ const LayerButton = styled(Button)`
 const DropTitle = styled.h6`
   ${headingAlt()}
   color: ${({ theme }) => rgba(theme.typography.baseFontColor, 0.64)};
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   line-height: 1rem;
   margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
 `;

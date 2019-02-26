@@ -21,6 +21,7 @@ const ModalInner = styled.div`
   grid-template-rows: auto;
   grid-auto-rows: 1fr;
   height: 100vh;
+
   /* Size attribute */
   ${({ size }) => `max-width: ${sizeMapping[size]};`}
 
