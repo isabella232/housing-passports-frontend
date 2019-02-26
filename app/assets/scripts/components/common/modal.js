@@ -16,17 +16,17 @@ const sizeMapping = {
 };
 
 const ModalInner = styled.div`
-  position: relative;
-  margin: 0;
-  width: 100%;
-  max-width: 48rem;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  height: 100vh;
+  /* Size attribute */
+  ${({ size }) => `max-width: ${sizeMapping[size]};`}
 
   > *:last-child {
     margin-bottom: 0;
   }
-
-  /* Size attribute */
-  ${({ size }) => `max-width: ${sizeMapping[size]};`}
 `;
 
 const ModalWrapper = styled.section`
@@ -37,7 +37,6 @@ const ModalWrapper = styled.section`
   right: 0;
   z-index: 9990;
   overflow-y: auto;
-  display: flex;
   opacity: 1;
   visibility: visible;
   background: #fff;
