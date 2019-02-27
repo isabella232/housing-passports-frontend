@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { PropTypes as T } from 'prop-types';
 import { rgba } from 'polished';
 
-import { environment } from '../../config';
+import { environment, baseurl } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
 import { divide } from '../../atomic-components/utils/math';
 import { antialiased } from '../../atomic-components/utils';
@@ -63,12 +63,7 @@ class Passport extends React.Component {
   renderData () {
     const data = this.props.rooftop.getData();
 
-    const images = [
-      'https://c1.staticflickr.com/4/3398/3201376678_f48c0d5e0f_b.jpg',
-      'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg',
-      'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg'
-    ];
-
+    const images = data.images.map(i => `${baseurl}/assets/graphics/street-view/${data.id}/${i}`);
     const [lon, lat] = this.props.rooftopCoords || ['n/a', 'n/a'];
 
     return (
@@ -77,7 +72,7 @@ class Passport extends React.Component {
           <SectionHeading variation='secondary' size='small'>
             Location
           </SectionHeading>
-          {images.length && (
+          {!!images.length && (
             <SectionFigure>
               <SectionFigureLink
                 href={`#passport-gallery-${data.id}`}
