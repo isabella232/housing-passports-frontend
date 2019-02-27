@@ -111,7 +111,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       mapView: this.getQSCoords(props),
-      mapillaryBearing: 0,
+      mapillaryBearing: 180,
 
       hoverFeatureId: null,
 
@@ -158,9 +158,9 @@ class Home extends React.Component {
 
   getQSCoords (props) {
     const defVals = {
-      lat: 4.5481,
-      lon: -74.1613,
-      zoom: 16
+      lat: 4.549836,
+      lon: -74.161026,
+      zoom: 18
     };
 
     const qsParams = qs.parse(props.location.search.substr(1));
