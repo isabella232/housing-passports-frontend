@@ -93,7 +93,7 @@ const Button = styled(BaseButton)`
   }
 
   &:hover {
-    opacity: initial;
+    opacity: 1;
   }
 
   ${({ active }) => (active ? '&,' : '')}
@@ -172,14 +172,14 @@ export default Button;
 // /////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates the css for a button variation.
+ * Computes the colors for the given button variation
  *
  * @param {string} color The base color for the button
  * @param {string} style The button style
  * @param {string} brightness The button brightness
  * @param {object} props The element props
  */
-function buttonVariation (color, style, brightness, { theme }) {
+function buttonVariationColors (color, style, brightness, { theme }) {
   let textColor = null;
   let bgColor = null;
   let bgColorHover = null;
@@ -232,6 +232,30 @@ function buttonVariation (color, style, brightness, { theme }) {
       break;
   }
 
+  return {
+    textColor,
+    bgColor,
+    bgColorHover,
+    bgColorActive,
+    shadowColor
+  };
+}
+
+/**
+ * Computes the base css for the buttons given color variations
+ *
+ * @param {string} color The base color for the button
+ * @param {string} style The button style
+ * @param {string} brightness The button brightness
+ * @param {object} props The element props
+ */
+export function buttonVariationBaseCss (color, style, brightness, { theme }) {
+  const {
+    textColor,
+    bgColor,
+    shadowColor
+  } = buttonVariationColors(color, style, brightness, { theme });
+
   return css`
     background-color: ${bgColor};
 
@@ -245,20 +269,71 @@ function buttonVariation (color, style, brightness, { theme }) {
         box-shadow: 0 -1px 1px 0 ${rgba(theme.colors.baseColor, 0.08)},
           0 2px 6px 0 ${shadowColor};
       `}
+  `;
+}
+
+/**
+ * Computes the active css for the buttons given color variations
+ *
+ * @param {string} color The base color for the button
+ * @param {string} style The button style
+ * @param {string} brightness The button brightness
+ * @param {object} props The element props
+ */
+export function buttonVariationActiveCss (color, style, brightness, { theme }) {
+  const {
+    bgColorActive,
+    shadowColor
+  } = buttonVariationColors(color, style, brightness, { theme });
+
+  return css`
+    background-color: ${bgColorActive};
+    ${shadowColor &&
+      css`
+        box-shadow: inset 0 1px 2px 0 ${shadowColor};
+      `}
+  `;
+}
+
+/**
+ * Computes the hover css for the buttons given color variations
+ *
+ * @param {string} color The base color for the button
+ * @param {string} style The button style
+ * @param {string} brightness The button brightness
+ * @param {object} props The element props
+ */
+export function buttonVariationHoverCss (color, style, brightness, { theme }) {
+  const {
+    bgColorHover
+  } = buttonVariationColors(color, style, brightness, { theme });
+
+  return css`
+    background-color: ${bgColorHover};
+  `;
+}
+
+/**
+ * Creates the css for a button variation.
+ *
+ * @param {string} color The base color for the button
+ * @param {string} style The button style
+ * @param {string} brightness The button brightness
+ * @param {object} props The element props
+ */
+export function buttonVariation (color, style, brightness, props) {
+  return css`
+    ${buttonVariationBaseCss(color, style, brightness, props)}
 
     /* &.button--hover, */
     &:hover {
-      background-color: ${bgColorHover};
+      ${buttonVariationHoverCss(color, style, brightness, props)}
     }
 
     ${({ active }) => (active ? '&, &:hover,' : '')}
     /* stylelint-disable-line */
     &:active {
-      background-color: ${bgColorActive};
-      ${shadowColor &&
-        css`
-          box-shadow: inset 0 1px 2px 0 ${shadowColor};
-        `}
+      ${buttonVariationActiveCss(color, style, brightness, props)}
     }
   `;
 }

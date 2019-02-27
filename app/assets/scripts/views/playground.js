@@ -8,6 +8,7 @@ import collecticon from '../atomic-components/collecticons';
 import Button from '../atomic-components/button';
 import ButtonGroup from '../atomic-components/button-group';
 import Dropdown from '../components/common/dropdown';
+import { FormSwitch } from '../atomic-components/form-options';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -90,6 +91,17 @@ export default class Playground extends React.Component {
           <Title>Housing Passports - Playground</Title>
         </header>
         <Main>
+
+          <FormSwitch
+            name={`switch-1`}
+            title='FormSwitch on/off'
+            textPlacement='right'
+            // checked={true}
+            // onChange={() => {}}
+          >
+            hello
+          </FormSwitch>
+
           <Dropdown
             triggerElement={
               <Button variation={'base-raised-light'}>Hello</Button>

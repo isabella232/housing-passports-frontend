@@ -8,6 +8,7 @@ import { collecticonsFont } from './atomic-components/collecticons';
 // This way they're only rendered when absolutely needed.
 import mapboxStyle from './vendor/mapbox';
 import mapillaryStyle from './vendor/mapillary';
+import reactResponsiveCarouselStyle from './vendor/react-responsive-carousel';
 
 const baseStyles = css`
   html {
@@ -34,6 +35,28 @@ const baseStyles = css`
     font-style: ${themeVal('typography.baseFontStyle')};
     min-width: ${themeVal('layout.rowMinWidth')};
   }
+
+  /* Links
+   ========================================================================== */
+
+  a {
+    cursor: pointer;
+    color: ${themeVal('colors.linkColor')};
+    text-decoration: none;
+    transition: opacity 0.24s ease 0s;
+  }
+
+  a:visited {
+    color: ${themeVal('colors.linkColor')};
+  }
+
+  a:hover {
+    opacity: 0.64;
+  }
+
+  a:active {
+    transform: translate(0, 1px);
+  }
 `;
 
 export default createGlobalStyle`
@@ -42,4 +65,5 @@ export default createGlobalStyle`
   ${baseStyles}
   ${mapboxStyle}
   ${mapillaryStyle}
+  ${reactResponsiveCarouselStyle}
 `;

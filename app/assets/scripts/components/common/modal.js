@@ -6,10 +6,6 @@ import { CSSTransition } from 'react-transition-group';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import { themeVal } from '../../atomic-components/utils/functions';
-import { multiply } from '../../atomic-components/utils/math';
-import collecticons from '../../atomic-components/collecticons';
-
-import Button from '../../atomic-components/button';
 
 const sizeMapping = {
   'small': '32rem',
@@ -20,19 +16,18 @@ const sizeMapping = {
 };
 
 const ModalInner = styled.div`
-  padding-left: 1rem;
-  padding-right: 1rem;
-  position: relative;
-  margin: 0;
-  width: 100%;
-  max-width: 48rem;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  height: 100vh;
+
+  /* Size attribute */
+  ${({ size }) => `max-width: ${sizeMapping[size]};`}
 
   > *:last-child {
     margin-bottom: 0;
   }
-
-  /* Size attribute */
-  ${({ size }) => `max-width: ${sizeMapping[size]};`}
 `;
 
 const ModalWrapper = styled.section`
@@ -43,7 +38,6 @@ const ModalWrapper = styled.section`
   right: 0;
   z-index: 9990;
   overflow-y: auto;
-  display: flex;
   opacity: 1;
   visibility: visible;
   background: #fff;
@@ -74,17 +68,17 @@ const ModalWrapper = styled.section`
   }
 `;
 
-const ButtonDismiss = styled(Button)`
-  position: absolute;
-  top: ${multiply(themeVal('layout.globalSpacing'), 1.5)};
-  right: ${multiply(themeVal('layout.globalSpacing'), 2)};
-  z-index: 10;
-
-  ::before {
-    ${collecticons('xmark')}
-    font-size: 1rem;
-  }
-`;
+// const ButtonDismiss = styled(Button)`
+//   position: absolute;
+//   top: ${multiply(themeVal('layout.globalSpacing'), 1.5)};
+//   right: ${multiply(themeVal('layout.globalSpacing'), 2)};
+//   z-index: 10;
+//
+//   ::before {
+//     ${collecticons('xmark')}
+//     font-size: 1rem;
+//   }
+// `;
 
 const BodyUnscrollable = createGlobalStyle`
   ${({ revealed }) => revealed && `
@@ -211,7 +205,7 @@ export class Modal extends React.Component {
             {this.props.bodyComponent}
             {this.props.footerComponent}
           </ModalInner>
-          <ButtonDismiss variation='base-plain' title='Close' onClick={this.onCloseClick} hideText>Dismiss</ButtonDismiss>
+          {/* <ButtonDismiss variation='base-plain' title='Close' onClick={this.onCloseClick} hideText>Dismiss</ButtonDismiss> */}
         </ModalWrapper>
 
       </CSSTransition>
@@ -254,26 +248,22 @@ if (process.env.NODE_ENV !== 'production') {
 
 export const ModalHeader = styled.header`
   position: relative;
-  margin: 0 -${themeVal('layout.globalSpacing')} ${themeVal('layout.globalSpacing')} -${themeVal('layout.globalSpacing')};
+  z-index: 10;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  background: #fff;
   padding: ${themeVal('layout.globalSpacing')};
+  box-shadow: 0 0 0 1px ${themeVal('colors.baseAlphaColor')};
+  min-height: 4rem;
 
   & > *:last-child {
     margin-bottom: 0;
   }
-
-  &::after {
-    content: '';
-    width: 100%;
-    height: ${themeVal('shape.borderWidth')};
-    background: ${themeVal('colors.baseAlphaColor')};
-    position: absolute;
-    left: 0;
-    bottom: 0;
-  }
 `;
 
 export const ModalBody = styled.div`
-  margin-bottom: ${multiply(themeVal('layout.globalSpacing'), 3)};
+  padding: ${themeVal('layout.globalSpacing')};
 
   & > *:last-child {
     margin-bottom: 0;

@@ -1,27 +1,52 @@
 'use strict';
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { rgba } from 'polished';
 import { PropTypes as T } from 'prop-types';
 import { Carousel } from 'react-responsive-carousel';
 
 import { environment } from '../../config';
-
+import { themeVal } from '../../atomic-components/utils/functions';
 import { Modal, ModalBody, ModalHeader } from '../common/modal';
+import Button from '../../atomic-components/button';
+import collecticons from '../../atomic-components/collecticons';
+
+const ModalToolbar = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  margin-left: auto;
+  align-items: center;
+  align-self: flex-start;
+`;
+
+const ModalClose = styled(Button)`
+  &::before {
+    ${collecticons('xmark')}
+  }
+`;
 
 const ModalTitle = styled.h1`
+  font-family: ${themeVal('typography.headingFontFamily')};
+  font-weight: ${themeVal('typography.headingFontWeight')};
+  letter-spacing: 0.125em;
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.25rem;
+  text-transform: uppercase;
+  color: ${themeVal('colors.primaryColor')};
   margin: 0;
 `;
 
 const ModalSubtitle = styled.p`
+  font-feature-settings: "pnum" 0; /* Use proportional numbers */
+  font-family: ${themeVal('typography.headingFontFamily')};
+  font-weight: ${themeVal('typography.headingFontRegular')};
   text-transform: uppercase;
+  color: ${({ theme }) => rgba(theme.typography.baseFontColor, 0.64)};
+  font-size: 0.875rem;
   margin: 0;
 `;
 
 const ModalBodyCarousel = styled(ModalBody)`
-  height: calc(100vh - 6rem);
-
   > div {
     height: 100%;
     display: flex;
@@ -72,17 +97,28 @@ class CarouselModal extends React.Component {
   }
 
   render () {
-    const { id, images, revealed, onCloseClick } = this.props;
+    const { id, images, revealed } = this.props;
     return (
       <Modal
         id={id}
         size='full'
         revealed={revealed}
-        onCloseClick={onCloseClick}
         headerComponent={(
           <ModalHeader>
-            <ModalTitle>Photo</ModalTitle>
-            <ModalSubtitle>{this.state.galleryCurrImg + 1} of {images.length}</ModalSubtitle>
+            <div>
+              <ModalTitle>Photo</ModalTitle>
+              <ModalSubtitle>{this.state.galleryCurrImg + 1} of {images.length}</ModalSubtitle>
+            </div>
+            <ModalToolbar>
+              <ModalClose
+                variation='base-plain'
+                title='Close gallery'
+                hideText
+                onClick={this.props.onCloseClick}
+              >
+                Close gallery
+              </ModalClose>
+            </ModalToolbar>
           </ModalHeader>
         )}
         bodyComponent={(

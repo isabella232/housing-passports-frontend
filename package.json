@@ -1,6 +1,6 @@
 {
   "name": "housing-passports-frontend",
-  "version": "0.1.0-alpha",
+  "version": "0.1.0",
   "description": "The Housing Passports project is a collaboration with the World Bank to improve housing resilience.",
   "repository": {
     "type": "git",
@@ -20,7 +20,8 @@
     "serve": "DS_ENV=development NODE_ENV=development gulp serve",
     "build": "DS_ENV=production NODE_ENV=production gulp",
     "stage": "DS_ENV=staging NODE_ENV=staging gulp",
-    "lint": "eslint app/assets/scripts/ --ext .js",
+    "lint": "yarn lint:js; yarn lint:css",
+    "lint:js": "eslint app/assets/scripts/ --ext .js",
     "lint:css": "stylelint 'app/assets/scripts/**/*.js'",
     "test": "echo \"No tests\" && exit 0"
   },
@@ -105,11 +106,13 @@
     "history": "^4.7.2",
     "lodash.defaultsdeep": "^4.6.0",
     "lodash.get": "^4.4.2",
+    "lodash.pick": "^4.4.0",
     "lodash.throttle": "^4.1.1",
     "mapbox-gl": "^0.53.0-beta.1",
     "mapillary-js": "^2.15.0",
     "polished": "^2.3.3",
     "prop-types": "^15.6.2",
+    "qs": "^6.6.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-helmet": "^5.2.0",

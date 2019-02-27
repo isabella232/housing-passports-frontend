@@ -99,7 +99,8 @@ module.exports.default = gulp.series(
   ),
   gulp.parallel(
     html,
-    imagesImagemin
+    imagesImagemin,
+    copyData
   ),
   finish
 );
@@ -214,6 +215,13 @@ function imagesImagemin () {
       $.imagemin.svgo({ plugins: [{ cleanupIDs: false }] })
     ]))
     .pipe(gulp.dest('dist/assets/graphics'));
+}
+
+function copyData () {
+  return gulp.src([
+    'app/assets/data/**/*'
+  ])
+    .pipe(gulp.dest('dist/assets/data'));
 }
 
 /**

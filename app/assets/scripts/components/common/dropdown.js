@@ -4,8 +4,6 @@ import { PropTypes as T } from 'prop-types';
 import TetherComponent from 'react-tether';
 import { CSSTransition } from 'react-transition-group';
 import styled, { css } from 'styled-components';
-
-import { divide, multiply } from '../../atomic-components/utils/math';
 import { themeVal } from '../../atomic-components/utils/functions';
 import { rgba } from 'polished';
 
@@ -130,6 +128,8 @@ export default class Dropdown extends React.Component {
 
     return React.cloneElement(triggerElement, {
       onClick: this._toggleDropdown,
+      active: this.state.open,
+      className: this.state.open ? 'active' : '',
       'data-drop-el': 'trigger',
       'data-drop-instance': this.uuid
     });
@@ -166,7 +166,7 @@ export default class Dropdown extends React.Component {
 
         <TransitionItem
           props={dropdownContentProps}
-          onChange={this.props.onChange} >
+          onChange={this.props.onChange}>
           { this.props.children }
         </TransitionItem>
 
@@ -297,7 +297,7 @@ const transitions = {
 const DropContent = styled.div`
   background: #fff;
   border-radius: ${themeVal('shape.rounded')};
-  box-shadow: 0 0 0 ${divide(themeVal('shape.borderWidth'), 2)} ${({ theme }) => rgba(theme.colors.baseColor, 0.08)}, ${multiply(themeVal('shape.borderWidth'), 2)} ${multiply(themeVal('shape.borderWidth'), 2)} 0 ${({ theme }) => rgba(theme.colors.baseColor, 0.06)};
+  box-shadow: 0 0 32px 2px ${({ theme }) => rgba(theme.colors.baseColor, 0.08)}, 0 16px 48px -16px ${({ theme }) => rgba(theme.colors.baseColor, 0.16)};
   position: relative;
   z-index: 1000;
   width: 100%;

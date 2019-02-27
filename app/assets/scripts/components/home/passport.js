@@ -1,14 +1,20 @@
 'use strict';
 import React from 'react';
 import styled from 'styled-components';
+import pick from 'lodash.pick';
 import { Link } from 'react-router-dom';
 import { PropTypes as T } from 'prop-types';
 import { rgba } from 'polished';
 
-import { environment } from '../../config';
+import { environment, baseurl } from '../../config';
 import { themeVal } from '../../atomic-components/utils/functions';
+import { divide } from '../../atomic-components/utils/math';
+import { antialiased } from '../../atomic-components/utils';
 
-import { LoadingSkeleton, LoadingSkeletonGroup } from '../common/loading-skeleton';
+import {
+  LoadingSkeleton,
+  LoadingSkeletonGroup
+} from '../common/loading-skeleton';
 import CarouselModal from './carousel-modal';
 import Heading from '../../atomic-components/heading';
 import Dl from '../../atomic-components/definition-list';
@@ -36,44 +42,75 @@ class Passport extends React.Component {
     this.setState({ galleryRevealed: true });
   }
 
+  renderSection (title, data) {
+    return (
+      <Section>
+        <SectionHeading variation='secondary' size='small'>
+          {title}
+        </SectionHeading>
+        <SectionDl type='horizontal'>
+          {Object.keys(data).map(k => (
+            <React.Fragment key={k}>
+              <dt>{k.replace('_', ' ')}</dt>
+              <dd>{data[k].toString()}</dd>
+            </React.Fragment>
+          ))}
+        </SectionDl>
+      </Section>
+    );
+  }
+
   renderData () {
     const data = this.props.rooftop.getData();
 
-    const images = [
-      'https://c1.staticflickr.com/4/3398/3201376678_f48c0d5e0f_b.jpg',
-      'https://c1.staticflickr.com/4/3675/12280756126_86c648809d_z.jpg'
-    ];
+    const images = data.images.map(i => `${baseurl}/assets/graphics/street-view/${data.id}/${i}`);
+    const [lon, lat] = this.props.rooftopCoords || ['n/a', 'n/a'];
 
     return (
       <PassportBody>
         <Section>
-          <SectionHeading variation='secondary' size='small'>Location</SectionHeading>
-          {images.length && (
-            <SectionFigureLink href={`#passport-gallery-${data.id}`} title='Open photo gallery' onClick={this.onGalleryImageClick}>
-              <SectionFigure>
-                <img src={images[0]} alt='Passport gallery image cover' />
+          <SectionHeading variation='secondary' size='small'>
+            Location
+          </SectionHeading>
+          {!!images.length && (
+            <SectionFigure>
+              <SectionFigureLink
+                href={`#passport-gallery-${data.id}`}
+                title='Open photo gallery'
+                onClick={this.onGalleryImageClick}
+              >
+                <SectionFigureThumb>
+                  <img src={images[0]} alt='Passport gallery image cover' />
+                </SectionFigureThumb>
                 <SectionFigcaption>{images.length} photos</SectionFigcaption>
-              </SectionFigure>
-            </SectionFigureLink>
+              </SectionFigureLink>
+            </SectionFigure>
           )}
           <SectionDl type='horizontal'>
-            <dt>Term</dt>
-            <dd>Definition</dd>
-            <dt>Term</dt>
-            <dd>Definition</dd>
+            <dt>Latitude</dt>
+            <dd>{lat}</dd>
+            <dt>Longitude</dt>
+            <dd>{lon}</dd>
           </SectionDl>
         </Section>
-        <Section>
-          <SectionHeading variation='secondary' size='small'>Evaluation</SectionHeading>
-          <SectionDl type='horizontal'>
-            {Object.keys(data).map(k => (
-              <React.Fragment key={k}>
-                <dt>{k.replace('_', ' ')}</dt>
-                <dd>{data[k].toString()}</dd>
-              </React.Fragment>
-            ))}
-          </SectionDl>
-        </Section>
+
+        {this.renderSection(
+          'Evaluation',
+          pick(data, [
+            'AREA',
+            'AVG_SLOPE',
+            'AVG_HEIGHT',
+            'FLOORS',
+            'ROOF_MATERIAL',
+            'TERRAIN_SLOPE',
+            'VOLUME'
+          ])
+        )}
+        {this.renderSection(
+          'StreetView detection',
+          pick(data, [ 'construction_ml', 'design_ml', 'material_ml' ])
+        )}
+        {this.renderSection('Risk', pick(data, ['FLOOD', 'LANDSLIDE']))}
 
         <CarouselModal
           id={`passport-gallery-${data.id}`}
@@ -95,23 +132,37 @@ class Passport extends React.Component {
         <PassportHeader>
           <PassportTitle>Passport</PassportTitle>
           <PassportToolbar>
-            <PassportClose element={Link} to='/' variation='base-plain' hideText>Close passport</PassportClose>
-            {/* <VerticalDivider /> */}
+            <PassportCenter
+              variation='base-plain'
+              hideText
+              onClick={this.props.onRecenterClick}
+              title='Recenter map views'
+            >
+              Center map here
+            </PassportCenter>
+            <VerticalDivider />
+            <PassportClose
+              element={Link}
+              to={{ pathname: '/', search: this.props.searchQS }}
+              variation='base-plain'
+              hideText
+              title='Close passport pane'
+            >
+              Close passport
+            </PassportClose>
           </PassportToolbar>
         </PassportHeader>
 
         {!isReady() && (
           <LoadingSkeletonGroup style={{ padding: '1rem' }}>
-            <LoadingSkeleton type='heading' width={1 / 5}/>
+            <LoadingSkeleton type='heading' width={1 / 5} />
             <LoadingSkeleton width={2 / 3} />
             <LoadingSkeleton width={2 / 3} />
             <LoadingSkeleton width={1 / 4} />
           </LoadingSkeletonGroup>
         )}
 
-        {hasError() && (
-          <p>Passport not found</p>
-        )}
+        {hasError() && <p>Passport not found</p>}
 
         {!hasError() && isReady() && this.renderData()}
       </article>
@@ -121,9 +172,12 @@ class Passport extends React.Component {
 
 if (environment !== 'production') {
   Passport.propTypes = {
+    onRecenterClick: T.func,
     className: T.string,
     rooftop: T.object,
-    visible: T.bool
+    rooftopCoords: T.array,
+    visible: T.bool,
+    searchQS: T.string
   };
 }
 
@@ -163,11 +217,20 @@ const PassportTitle = styled.h1`
 `;
 
 const PassportToolbar = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
   margin-left: auto;
+  align-items: center;
+`;
+
+const PassportCenter = styled(Button)`
+  &::before {
+    ${collecticons('crosshair')}
+  }
 `;
 
 const PassportClose = styled(Button)`
-  ::before {
+  &::before {
     ${collecticons('xmark')}
   }
 `;
@@ -177,18 +240,25 @@ const PassportBody = styled.div`
   overflow-y: scroll;
 `;
 
-// const VerticalDivider = styled.hr`
-//   border: 0;
-//   width: ${divide(themeVal('layout.globalSpacing'), 2)};
-//   height: ${themeVal('layout.globalSpacing')};
-//   margin: 0 ${divide(themeVal('layout.globalSpacing'), 4)};
-//   background: transparent linear-gradient(transparent, ${themeVal('colors.baseAlphaColor')}, transparent) 50% / auto ${themeVal('shape.borderWidth')} repeat-y;
-// `;
+const VerticalDivider = styled.hr`
+  border: 0;
+  width: ${divide(themeVal('layout.globalSpacing'), 2)};
+  height: ${themeVal('layout.globalSpacing')};
+  margin: 0;
+  background:
+    transparent
+    linear-gradient(
+      90deg,
+      ${themeVal('colors.baseAlphaColor')},
+      ${themeVal('colors.baseAlphaColor')}
+    )
+    50% / ${themeVal('shape.borderWidth')} auto no-repeat;
+`;
 
 const Section = styled.section`
-  padding: ${themeVal('layout.globalSpacing')};
   display: flex;
   flex-flow: column;
+  padding: ${themeVal('layout.globalSpacing')};
 
   &:not(:last-child) {
     box-shadow: 0 1px 0 0 ${themeVal('colors.baseAlphaColor')};
@@ -200,7 +270,7 @@ const Section = styled.section`
 `;
 
 const SectionHeading = styled(Heading)`
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
 `;
 
 const SectionDl = styled(Dl)`
@@ -212,34 +282,76 @@ const SectionDl = styled(Dl)`
     line-height: 1rem;
   }
 
+  dt {
+    font-weight: ${themeVal('typography.headingFontRegular')};
+  }
+
   dd {
     font-weight: ${themeVal('typography.baseFontBold')};
   }
 `;
 
-const SectionFigureLink = styled.a`
+const SectionFigure = styled.figure`
+  ${antialiased()}
+  position: relative;
   order: -1;
+  margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  font-weight: ${themeVal('typography.baseFontBold')};
 `;
 
-const SectionFigure = styled.figure`
+const SectionFigureLink = styled.a`
   position: relative;
-  margin: 0 0 ${themeVal('layout.globalSpacing')} 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: ${themeVal('layout.globalSpacing')};
+  min-height: 12rem;
+  color: inherit;
+`;
+
+const SectionFigureThumb = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
   border-radius: ${themeVal('shape.rounded')};
   overflow: hidden;
-  box-shadow: 0 0 0 1px ${({ theme }) => rgba(theme.colors.baseColor, 0.16)};
+  background: ${themeVal('colors.baseAlphaColor')};
 
   > img {
+    height: 100%;
     width: 100%;
+    object-fit: cover;
+    z-index: 1;
     display: block;
+  }
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    content: '';
+    border-radius: ${themeVal('shape.rounded')};
+    background:
+      linear-gradient(
+        -45deg,
+        ${({ theme }) => rgba(theme.colors.baseColor, 0.32)} 0%,
+        ${({ theme }) => rgba(theme.colors.baseColor, 0)} 100%
+      );
+    pointer-events: none;
   }
 `;
 
 const SectionFigcaption = styled.figcaption`
-  position: absolute;
-  bottom: ${themeVal('layout.globalSpacing')};
-  right: ${themeVal('layout.globalSpacing')};
-  z-index: 10;
-  color: #fff;
-  line-height: 1;
-  text-shadow: 0 0 8px ${({ theme }) => rgba(theme.colors.baseColor, 0.64)};
+  position: relative;
+  z-index: 3;
 `;

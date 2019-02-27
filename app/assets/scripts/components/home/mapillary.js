@@ -38,7 +38,7 @@ class MapillaryView extends React.PureComponent {
       component: {
         cover: false,
         marker: {
-          visibleBBoxSize: 50
+          visibleBBoxSize: 30
         }
       }
     };
@@ -50,11 +50,15 @@ class MapillaryView extends React.PureComponent {
       mlyConfig
     );
 
-    this.mly.moveCloseTo(4.549837141933978, -74.16000750189613);
+    const [lon, lat] = this.props.coordinates;
+    this.mly.moveCloseTo(lat, lon);
 
     // Update coordinates when the user navigates.
     this.mly.on(Mapillary.Viewer.nodechanged, node =>
-      this.props.onCoordinatesChange([node.latLon.lon, node.latLon.lat])
+      this.props.onCoordinatesChange([
+        node.originalLatLon.lon,
+        node.originalLatLon.lat
+      ])
     );
 
     // Update the bearing on rotation.
@@ -107,17 +111,19 @@ class MapillaryView extends React.PureComponent {
     // Highlight the marker.
     // De-highlight the previous one.
     if (hlMarker !== prevHlMarker) {
-      if (prevHlMarker !== null) {
+      const prevHlMarkerComp = markerComponent.get(`rooftop-${prevHlMarker}`);
+      if (prevHlMarker !== null && prevHlMarkerComp) {
         markers[prevHlMarker] = {
           id: prevHlMarker,
-          latLon: markerComponent.get(`rooftop-${prevHlMarker}`).latLon,
+          latLon: prevHlMarkerComp.latLon,
           type: prevHlMarker === selMarker ? 'selected' : 'normal'
         };
       }
-      if (hlMarker !== null) {
+      const hlMarkerComp = markerComponent.get(`rooftop-${hlMarker}`);
+      if (hlMarker !== null && hlMarkerComp) {
         markers[hlMarker] = {
           id: hlMarker,
-          latLon: markerComponent.get(`rooftop-${hlMarker}`).latLon,
+          latLon: hlMarkerComp.latLon,
           type: 'hover'
         };
       }
@@ -126,17 +132,19 @@ class MapillaryView extends React.PureComponent {
     // Select the marker.
     // De-select the previous one.
     if (selMarker !== prevSelMarker) {
-      if (prevSelMarker !== null) {
+      const prevSelMarkerComp = markerComponent.get(`rooftop-${prevSelMarker}`);
+      if (prevSelMarker !== null && prevSelMarkerComp) {
         markers[prevSelMarker] = {
           id: prevSelMarker,
-          latLon: markerComponent.get(`rooftop-${prevSelMarker}`).latLon,
+          latLon: prevSelMarkerComp.latLon,
           type: 'normal'
         };
       }
-      if (selMarker !== null) {
+      const selMarkerComp = markerComponent.get(`rooftop-${selMarker}`);
+      if (selMarker !== null && selMarkerComp) {
         markers[selMarker] = {
           id: selMarker,
-          latLon: markerComponent.get(`rooftop-${selMarker}`).latLon,
+          latLon: selMarkerComp.latLon,
           type: 'selected'
         };
       }
@@ -148,6 +156,17 @@ class MapillaryView extends React.PureComponent {
           .filter(Boolean)
           .map(m => this.createMarker(m.id, m.latLon, m.type))
       );
+    }
+
+    // Fly to location if centerKey was updated.
+    // This key is used to trigger an update in certain situations.
+    // This is only used when a new rooftop gets selected.
+    if (
+      this.props.rooftopCoords &&
+      this.props.centerKey !== prevProps.centerKey
+    ) {
+      const [lon, lat] = this.props.rooftopCoords;
+      this.mly.moveCloseTo(lat, lon);
     }
   }
 
@@ -179,13 +198,13 @@ class MapillaryView extends React.PureComponent {
 
     const { highlightMarkerId, selectedMarkerId } = this.props;
     const markers = rooftopCentroids.map(element => {
-      const [lon, lat] = element.coords;
+      const [lon, lat] = element.c;
       return this.createMarker(
-        element.id,
+        element.i,
         { lon, lat },
-        highlightMarkerId === element.id
+        highlightMarkerId === element.i
           ? 'hover'
-          : selectedMarkerId === element.id
+          : selectedMarkerId === element.i
             ? 'selected'
             : 'normal'
       );
@@ -223,6 +242,9 @@ if (environment !== 'production') {
   MapillaryView.propTypes = {
     theme: T.object,
     vizView: T.string,
+    coordinates: T.array,
+    rooftopCoords: T.array,
+    centerKey: T.number,
     onCoordinatesChange: T.func,
     onBearingChange: T.func,
     onMarkerHover: T.func,
