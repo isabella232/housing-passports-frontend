@@ -54,8 +54,8 @@ const mapLayers = [
     initial: false
   },
   {
-    id: 2,
-    label: 'layer 2',
+    id: 'mapbox-drone',
+    label: 'Drone Imagery',
     initial: false
   }
 ];
@@ -230,19 +230,34 @@ class MapboxView extends React.PureComponent {
     }
 
     // Add toggable layers.
-    const mapboxIdx = mapLayers.findIndex(o => o.id === 'mapbox-satellite');
+    // Mapbox
+    const satLayerIdx = mapLayers.findIndex(o => o.id === 'mapbox-satellite');
     this.map.addSource('mapbox-satellite', {
       type: 'raster',
-      tiles: [
-        `https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=${mbtoken}`
-      ]
+      url: 'mapbox://mapbox.satellite'
     });
     this.map.addLayer({
       id: 'mapbox-satellite',
       type: 'raster',
       source: 'mapbox-satellite',
       layout: {
-        visibility: this.state.layersState[mapboxIdx] ? 'visible' : 'none'
+        visibility: this.state.layersState[satLayerIdx] ? 'visible' : 'none'
+      }
+    });
+
+    // Add toggable layers.
+    // Drone
+    const droneLayerIdx = mapLayers.findIndex(o => o.id === 'mapbox-drone');
+    this.map.addSource('mapbox-drone', {
+      type: 'raster',
+      url: 'mapbox://devseed.bi28yjei'
+    });
+    this.map.addLayer({
+      id: 'mapbox-drone',
+      type: 'raster',
+      source: 'mapbox-drone',
+      layout: {
+        visibility: this.state.layersState[droneLayerIdx] ? 'visible' : 'none'
       }
     });
 
